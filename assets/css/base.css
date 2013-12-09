@@ -1,0 +1,257 @@
+/*RESET*/
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,figcaption,figure,footer,header,hgroup,menu,nav,section,summary,time,mark,audio,video{border:0;outline:0;font-size:100%;font:inherit;vertical-align:baseline;margin:0;padding:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1;}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:none}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}input,textarea{outline:none}
+
+body {
+	background: #333;
+	overflow: hidden;
+	font-size: 12px;
+	font-family: sans-serif;
+}
+
+.legend {
+	float: left;
+	padding: 10px;
+	margin: 30px;
+	border-radius: 5px;
+	background: white;
+	font-size: 12px;
+	line-height: 14px;
+}
+
+.outherGameZone {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	height: 600px;
+	width: 800px;
+	margin: -300px 0 0 -400px;
+	overflow: hidden;
+	background: black;
+	cursor: move;
+}
+
+#gameZone {
+	position: relative;
+}
+
+#gameZone #ui {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 800px;
+	height: 600px;
+	margin: -300px 0 0 -400px;
+	/*background: url(../images/reperes.png);*/
+	z-index: 997;
+	overflow: hidden;
+}
+
+/* LEVELS LAYER */
+#gameZone #playerTriggerLayer,
+#gameZone #actionLayer,
+#gameZone #decorationLayer,
+#gameZone #levelsLayer {
+	z-index: 1;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 1600px;
+	width: 1600px;
+	margin: 0;
+}
+
+/* hide by default */
+#gameZone #actionLayer {
+	display: block;
+	z-index: 998;
+}
+
+
+/*CURSOR*/
+
+#mycursor {
+	position: absolute;
+	display: none;
+	cursor: none;
+	height: 48px;
+	width: 48px;
+	background: url(../images/cursors.png) 0 0 no-repeat;
+	z-index: 999;
+}
+
+
+#mycursor.normal {
+	background: url(../images/cursors.png) 0 0 no-repeat;
+}
+
+
+
+
+
+
+
+
+
+
+
+#gameZone #levelsLayer {
+	/*background: url(../images/ground.png) repeat;*/
+	background: #b09f84;
+} 
+
+/*COLLISION WALL (insibles) rotated*/
+#gameZone .collisionWall,
+#gameZone .actionWall {
+	position: absolute;
+	height: 96px;
+	width: 96px;
+}
+
+#gameZone .actionWall {
+	background: none;
+}
+
+#gameZone #actionLayer .actionWall {
+	background: none;
+}
+/*
+#gameZone #actionLayer .actionWall.possiblesMoves:hover {
+	background: rgba(0,120,200,0.50);
+	cursor: pointer;
+}
+
+#gameZone #actionLayer .actionWall.impossiblesMoves:hover {
+	background: rgba(250,50,000,0.50);
+	cursor: default;
+}
+
+#gameZone #actionLayer .actionWall.impossiblesMoves.minable:hover {
+	background: rgba(125,200,0,0.50);
+	cursor: pointer;
+}
+
+*/
+
+
+
+
+
+
+
+/* PLAYER */
+#gameZone #playerTriggerLayer {
+	display: none;
+	z-index: 999;
+}
+
+#gameZone #playerTrigger {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 96px;
+	width: 96px;
+	background: rgba(0,0,0,0.20);
+	margin: -46px 0 0 -30px;
+	cursor: pointer;
+	z-index: 999;
+}
+
+#gameZone #player {
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: url(../images/player-shadow.png) center bottom no-repeat;
+}
+#gameZone #player #playerSprite {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 120px;
+	width: 96px;
+	background: url(../images/entities-sprites.png) 0 0 no-repeat;
+	border-radius: 5px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*DECORATION*/
+#gameZone .collisionWall .walls {
+	display: block;
+	position: absolute;
+	width: 96px;
+	height: 96px;
+	left: 0;
+	bottom: 0;
+}
+
+
+
+
+/*GROUND - SAND */
+#gameZone .collisionWall.type0 {
+}
+#gameZone .collisionWall.type0 .walls {
+	background: url(../images/walls-sprites.png) 0 0 no-repeat;
+}
+
+
+/*WALLS - VERTICAL*/
+#gameZone .collisionWall.type1 {
+}
+#gameZone .collisionWall.type1 .walls {
+	height: 192px;
+	background: url(../images/walls-sprites.png) -192px -192px no-repeat;
+}
+
+/*ACTION - MINING*/
+#gameZone .collisionWall.type2 {
+}
+
+#gameZone .collisionWall.type2 .walls {
+	background: url(../images/walls-sprites.png) 0 -96px no-repeat;
+	height: 96px;
+}
+
+
+/*OBSTACLE - COLONNE */
+#gameZone .collisionWall.type3 {
+	background: transparent;
+}
+#gameZone .collisionWall.type3 .walls {
+	background: url(../images/walls-sprites.png) 0 -192px no-repeat;
+	height: 192px;
+}
+
+/*DOOR*/
+#gameZone .collisionWall.type4 {
+	background: white;
+}
+
+/*EXIT*/
+#gameZone .collisionWall.type5 {
+	background: url(../images/walls-sprites.png) -192px -96px no-repeat;
+}
+
+/*KEY*/
+#gameZone .collisionWall.type6 {
+	background: yellow;
+}
+
+
+
+
+
+
+
