@@ -94,9 +94,9 @@ var Game = function(gameWidth, gameHeight, baseMap, fps, currentLevel) {
 
 var possiblesMoves = [
 	[0,0,0,0,0],
-	[0,2,1,2,0],
+	[0,0,1,0,0],
 	[0,1,0,1,0],
-	[0,2,1,2,0],
+	[0,0,1,0,0],
 	[0,0,0,0,0]
 ];
 
@@ -209,49 +209,6 @@ var Player = function($player, $playerTrigger, settings) {
 					$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"].type6').addClass('minable');
 					//move imposible
 					$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"].type3').addClass('impossiblesMoves');
-
-				} else if (this.possiblesMoves[i][j] === 2) {
-
-					//check diagonales
-					var aroundRow = i + row - 2;
-					var aroundCol = j + col - 2;
-					var $diagonalToCheck = $actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"]');
-
-					// not type 1, 2, 3 (ok to type 0, 4, 5 ...)
-					if (!$diagonalToCheck.is('.type1, .type2, .type3')) {
-						//check obstacle around diagonales
-						if (i-2 > 0) {
-							// bas
-							if (j-2 > 0) {
-								// droite
-								if (!$actionLayer.find('[data-row="'+(aroundRow-1)+'"][data-col="'+aroundCol+'"]').hasClass('impossiblesMoves') && !$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+(aroundCol-1)+'"]').hasClass('impossiblesMoves')) {
-									//diagonales possibles:
-									$diagonalToCheck.addClass('possiblesMoves');
-								}
-							} else {
-								// gauche
-								if (!$actionLayer.find('[data-row="'+(aroundRow-1)+'"][data-col="'+aroundCol+'"]').hasClass('impossiblesMoves') && !$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+(aroundCol+1)+'"]').hasClass('impossiblesMoves')) {
-									//diagonales possibles:
-									$diagonalToCheck.addClass('possiblesMoves');
-								}
-							}
-						} else {
-							// haut
-							if (j-2 > 0) {
-								//droite
-								if (!$actionLayer.find('[data-row="'+(aroundRow+1)+'"][data-col="'+aroundCol+'"]').hasClass('impossiblesMoves') && !$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+(aroundCol-1)+'"]').hasClass('impossiblesMoves')) {
-									//diagonales possibles:
-									$diagonalToCheck.addClass('possiblesMoves');
-								}
-							} else {
-								// gauche
-								if (!$actionLayer.find('[data-row="'+(aroundRow+1)+'"][data-col="'+aroundCol+'"]').hasClass('impossiblesMoves') && !$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+(aroundCol+1)+'"]').hasClass('impossiblesMoves')) {
-									//diagonales possibles:
-									$diagonalToCheck.addClass('possiblesMoves');
-								}
-							}
-						}
-					}
 				}
 			}
 		}
