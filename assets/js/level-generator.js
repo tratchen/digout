@@ -1,5 +1,5 @@
 
-/*SIMPLE GENERATION MAP*/
+/*Random level generator*/
 
 var LevelGeneration = function(levelRow, levelCol) {
 	var i,
@@ -8,7 +8,7 @@ var LevelGeneration = function(levelRow, levelCol) {
 		level = [];
 
 	for (i = 1; i <= levelCol; i++) {
-		var levelNewLine = new Array();
+		var levelNewLine = [];
 		for(j = 1; j <= levelRow; j++) {
 			// rock walls around the map
 			if (j === 1 || j === levelRow || i === 1 || i === levelCol) {

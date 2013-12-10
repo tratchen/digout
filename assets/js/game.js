@@ -12,15 +12,15 @@ var customcursor = function(element,cursorState) {
 	$(element).mousemove(function(e){
 		$('#mycursor').css('left', e.clientX - 1).css('top', e.clientY + 1);
 	});
-}
+};
 
 Math.rand = function(min, max) {
 	return Math.floor(Math.random() * (max - min) + min);
-}
+};
 
 Array.prototype.random = function() {
 	return this[Math.rand(0, this.length)];  
-}
+};
 
 Number.prototype.clamp = function(min, max) {
 	return Math.min(Math.max(this, min), max);
@@ -30,14 +30,14 @@ Number.prototype.clamp = function(min, max) {
 
 
 
-//jquery get dom elems
-var $game = $('#gameZone'),
-	$levelsLayer = $game.find('#levelsLayer'),
-	$actionLayer = $game.find('#actionLayer'),
-	$allLayers = $game.find('#levelsLayer, #actionLayer, #playerTriggerLayer'),
-	$player = $game.find('#player'),
-	$playerSprite = $player.find('#playerSprite'),
-	$playerTrigger = $game.find('#playerTrigger');
+// jquery get dom elems
+var $game = $('#gameZone');
+var $levelsLayer = $game.find('#levelsLayer');
+var $actionLayer = $game.find('#actionLayer');
+var $allLayers = $game.find('#levelsLayer, #actionLayer, #playerTriggerLayer');
+var $player = $game.find('#player');
+var $playerSprite = $player.find('#playerSprite');
+var $playerTrigger = $game.find('#playerTrigger');
 
 
 // TEST
@@ -59,28 +59,33 @@ var Game = function(gameWidth, gameHeight, baseMap, fps, currentLevel) {
 
 	this.drawCollisionWalls = function() {
 
-		var length = this.currentLevel.length,
-			row,
-			col;
+		var length = this.currentLevel.length;
+		var row;
+		var col;
 
 		for (row = 0; row < length; row++) {
 			for (col = 0; col < this.currentLevel[row].length; col++) {
-					
-				var zIndex = ((row+1)*10)+col;
-				//decor container and collisions
-				$levelsLayer.append(
-					'<div class="collisionWall type'+this.currentLevel[row][col]+'" id="wall-'+row+'-'+col+'" style="'
-					+'left:'+(col*this.baseMap)+'px; '
-					+'top:'+(row*this.baseMap)+'px; '
-					+'z-index:'+zIndex+';"><div class="walls"></div></div>'
-				);
-				//click triggers
-				$actionLayer.append(
-					'<div class="actionWall type'+this.currentLevel[row][col]+'" data-row="'+row+'" data-col="'+col+'" style="'
-					+'left:'+(col*this.baseMap)+'px; '
-					+'top:'+(row*this.baseMap)+'px; '
-					+'z-index:'+zIndex+';"></div>'
-				);
+								
+				//create elements
+				var wallsDiv = $(document.createElement('div')).addClass('walls');
+			
+				var collisionWallDiv = $(document.createElement('div')).css({
+					top: (row*this.baseMap),
+					left: (col*this.baseMap),
+					zIndex: ((row+1)*10)+col
+				}).attr({
+					class: 'type' + this.currentLevel[row][col],
+					id: 'wall-' + row + '-' + col,
+					"data-row": row,
+					"data-col": col
+				});
+
+				var actionWallDiv = collisionWallDiv.clone();
+
+				// place elements
+				wallsDiv.appendTo(collisionWallDiv);
+				$levelsLayer.append(collisionWallDiv.addClass('collisionWall'));
+				$actionLayer.append(actionWallDiv.addClass('actionWall'));
 			}
 		}
 	};
@@ -164,7 +169,7 @@ var Player = function($player, $playerTrigger, settings) {
 			var steps = 3;
 		}
 
-		//Anime it
+		// Anime it
 		this.spriteAnimation = setInterval(function() {
 			player.spriteAnimationLoop(rowSprite,steps);
 		}, player.baseSpeed*2);
@@ -184,15 +189,15 @@ var Player = function($player, $playerTrigger, settings) {
 	};
 
 	this.checkPossiblesMove = function() {
-		//calculate possibles moves
-		var i,
-			j,
-			row = parseInt(this.y/this.settings[2],10),
-			col = parseInt(this.x/this.settings[2],10),
-			possiblesMovesLength = this.possiblesMoves.length,
-			possiblesActionsLength = this.possiblesActions.length;
+		// calculate possibles moves
+		var i;
+		var j;
+		var row = parseInt(this.y/this.settings[2],10);
+		var col = parseInt(this.x/this.settings[2],10);
+		var possiblesMovesLength = this.possiblesMoves.length;
+		var possiblesActionsLength = this.possiblesActions.length;
 
-		//reset
+		// reset
 		$actionLayer.find('.actionWall').removeClass('possiblesMoves impossiblesMoves minable');
 
 		for (i=0; i < possiblesMovesLength; i++) {
@@ -217,20 +222,14 @@ var Player = function($player, $playerTrigger, settings) {
 
 	this.move = function(Y,X,Z) {
 
-		// console.log(
-		// 	' Y: ', Y, '->' , this.y,'\n',
-		// 	'X: ', X, '->' , this.x
-		// );
-
-		//stop animation
+		// stop animation
 		clearInterval(this.spriteAnimation);
 
-		var oldZIndex = $player.css('z-index')
-			that = this;
+		var oldZIndex = $player.css('z-index');
+		var that = this;
 
-		//previens le glitch avant le déplacement 
+		// previens le glitch avant le déplacement 
 		if (Z - oldZIndex >= 9) {
-			//console.log(Z - oldZIndex >= 9, Z - oldZIndex < -9);
 			$player.css({
 				zIndex: Z+1
 			});
@@ -244,6 +243,7 @@ var Player = function($player, $playerTrigger, settings) {
 			});
 		}
 
+		// move the player sprite
 		$player.animate({
 			top: Y,
 			left: X,
@@ -255,63 +255,68 @@ var Player = function($player, $playerTrigger, settings) {
 			that.sprite('idle');
 		});
 
+		// move the player trigger
 		$playerTrigger.animate({
 			top: Y,
 			left: X
 		},this.baseSpeed);
 
+		// move the "camera"
 		$allLayers.stop().animate({
 			top: this.settings[0]/2-(Y + this.settings[2]),
 			left: this.settings[1]/2-(X - this.settings[2])
 		},this.baseSpeed*10, "easeOutExpo");
 	};
 };
-//END PLAYER
+// END PLAYER
 
 
 
 
-//check updates status and animations
+// check updates status and animations
 function update() {
 	
 }
 
-//draw for test
+// draw for test
 (function start() {
 
 	customcursor($game,'normal');
 
-	//temp : randomize small maps
+	// temp : randomize small maps
 	var randomMapCols = Math.floor(Math.random() * 6) + 6;
 	var randomMapsRows = Math.floor(Math.random() * 6) + 6;
 
-	//set level
-	level = new LevelGeneration(randomMapCols, randomMapsRows);
+	// Set the level
+	// Radom level :
+	// level = new LevelGeneration(randomMapCols, randomMapsRows);
+	
+	level = level_test_0; // <- Static level
 	
 	$levelsLayer.css({
 		width: randomMapCols*Game.baseMap,
 		height: randomMapsRows*Game.baseMap
 	});
 
-	//draw walls
+	// draw walls
 	var newGame = new Game(800, 600, 96, 50, level);
 	newGame.drawCollisionWalls();
 
-	//player set
+	// player set
 	player = new Player($player, $playerTrigger, newGame.settings);
 	player.init();
 	
-	//set z-index
-	player.draw(parseInt($levelsLayer.find('#wall-'+ parseInt((player.y)/newGame.baseMap,10)+'-'+parseInt((player.x)/newGame.baseMap),10).css('z-index'),10));
+	// set z-index
+	player.draw(parseInt($levelsLayer.find('#wall-' + parseInt( (player.y)/newGame.baseMap,10 ) + '-' + parseInt( (player.x)/newGame.baseMap,10 ) ).css('z-index') ,10));
 
 	
-	//ACTIONS WALL BINDING
+	// ACTIONS WALL BINDING
 	$actionLayer.find('.actionWall').on('click', function() {
 
 		var $this = $(this);
 
 		if (player.actionWallFlag) {
-			//WALK FREE
+			// WALK FREE
 			if ($this.hasClass('possiblesMoves')) {
 				var destinationY = parseInt($this.css('top'),10) + (newGame.baseMap/2) -player.height/2;
 				var destinationX = parseInt($this.css('left'),10) + (newGame.baseMap/2) -player.width/2;
@@ -321,11 +326,11 @@ function update() {
 
 			} else if ($this.hasClass('minable')) {
 				
-				//MINE BLOCK
-				//var dataCol = parseInt($(this).attr('data-col'),10);
-				//var dataRow = parseInt($(this).attr('data-row'),10);
+				// MINE BLOCK
+				// var dataCol = parseInt($(this).attr('data-col'),10);
+				// var dataRow = parseInt($(this).attr('data-row'),10);
 
-				//console.log('minable');
+				console.log('mining');
 
 				player.actionWallFlag = true;
 
