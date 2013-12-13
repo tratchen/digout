@@ -207,15 +207,41 @@ var Player = function(settings) {
 				if (this.possiblesMoves[i][j] === 1) {
 					var aroundRow = i + row - 2;
 					var aroundCol = j + col - 2;
+					var targetWall = $actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"]');
+					var targetWallAttribute;
 					//move possible
-					$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"].type0').addClass('possiblesMoves');
-					$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"].type4').addClass('possiblesMoves');
-					$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"].type5').addClass('possiblesMoves');
-					//action : mining
-					$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"].type2').addClass('minable');
-					$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"].type6').addClass('minable');
-					//move imposible
-					$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"].type3').addClass('impossiblesMoves');
+										
+					switch(targetWall.attr('class').split(/\s+/)[0]) {
+						case "type0":
+						targetWallAttribute = 'possiblesMoves';
+						break;
+
+						case "type1":
+						targetWallAttribute = 'impossiblesMoves';
+						break;
+
+						case "type2":
+						targetWallAttribute = 'minable';
+						break;
+
+						case "type3":
+						targetWallAttribute = 'impossiblesMoves';
+						break;
+
+						case "type4":
+						targetWallAttribute = 'possiblesMoves';
+						break;
+
+						case "type5":
+						targetWallAttribute = 'possiblesMoves';
+						break;
+
+						case "type6":
+						targetWallAttribute = 'minable';
+						break;
+					}
+
+					targetWall.addClass(targetWallAttribute);
 				}
 			}
 		}
@@ -310,25 +336,39 @@ function update() {
 		var $this = $(this);
 
 		if (player.actionWallFlag) {
+			
 			// WALK FREE
-			if ($this.hasClass('possiblesMoves')) {
-				var destinationY = parseInt($this.css('top'),10) + (player.settings.baseMap/2) - player.height/2;
-				var destinationX = parseInt($this.css('left'),10) + (player.settings.baseMap/2) - player.width/2;
-				var positionIDWall = parseInt($this.css('z-index'),10);
+			var destinationY = parseInt($this.css('top'),10) + (player.settings.baseMap/2) - player.height/2;
+			var destinationX = parseInt($this.css('left'),10) + (player.settings.baseMap/2) - player.width/2;
+			var positionIDWall = parseInt($this.css('z-index'),10);
 
+			if ($this.hasClass('possiblesMoves')) {
+				
+				//Move position
 				player.move(destinationY,destinationX,positionIDWall);
 
 			} else if ($this.hasClass('minable')) {
 				
+				// Move position
+				player.move(destinationY,destinationX,positionIDWall);
+
 				// MINE BLOCK
 				// var dataCol = parseInt($(this).attr('data-col'),10);
 				// var dataRow = parseInt($(this).attr('data-row'),10);
 
 				console.log('mining');
+				player.actionWallFlag = false;
 
-				player.actionWallFlag = true;
+				setTimeout(function() {
 
-				$this.removeClass('impossiblesMoves minable').addClass('possiblesMoves');
+					player.actionWallFlag = true;
+					$this.removeClass('impossiblesMoves minable').addClass('possiblesMoves');
+			
+				}, 1000);
+
+				
+
+				
 			
 			} else {
 
