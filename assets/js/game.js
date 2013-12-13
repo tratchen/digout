@@ -5,19 +5,6 @@
 	Didier Chartrain - copycut.design@gmail.com
 */
 
-var customcursor = function(element,cursorState) {
-	$('body').append('<span id="mycursor" class="'+cursorState+'"></span>');
-	element.css('cursor','none');
-	$(element).hover(function() {
-		$('#mycursor').show();
-	},function() {
-		$('#mycursor').hide();		
-	});
-	$(element).mousemove(function(e){
-		$('#mycursor').css('left', e.clientX - 1).css('top', e.clientY + 1);
-	});
-};
-
 Math.rand = function(min, max) {
 	return Math.floor(Math.random() * (max - min) + min);
 };
@@ -65,10 +52,11 @@ var Game = function(settings) {
 		var row;
 		var col;
 
+		// Create wall based on the level titled map
 		for (row = 0; row < length; row++) {
 			for (col = 0; col < this.settings.currentLevel[row].length; col++) {
 								
-				//create elements
+				//create empty elements
 				var wallsDiv = $(document.createElement('div')).addClass('walls');
 			
 				var collisionWallDiv = $(document.createElement('div')).css({
@@ -79,7 +67,8 @@ var Game = function(settings) {
 					class: 'type' + this.settings.currentLevel[row][col],
 					id: 'wall-' + row + '-' + col,
 					"data-row": row,
-					"data-col": col
+					"data-col": col,
+					"data-type": this.settings.currentLevel[row][col]
 				});
 
 				var actionWallDiv = collisionWallDiv.clone();
@@ -96,6 +85,10 @@ var Game = function(settings) {
 			height: this.settings.gameHeight
 		});
 	};
+
+	this.modifyWall = function(col, row, type) {
+		settings.currentLevel[row][col] = type;
+	}
 };
 
 
@@ -295,6 +288,35 @@ var Player = function(settings) {
 			left: this.settings.gameHeight/2-(X - this.settings.baseMap)
 		},this.baseSpeed*10, "easeOutExpo");
 	};
+
+	this.mining = function(col, row, blocElement) {
+		
+		console.log('mining');
+
+		var typeResult;
+
+		if (parseInt(blocElement.attr('data-type'), 10) === 2) {
+			typeResult = 0;
+		}
+
+		this.actionWallFlag = false;
+
+		$player.find('.miningBar').fadeIn(250).find('.progression').css('width',0).animate({
+			width: '100%'
+		}, 800, function() {			
+			
+			player.actionWallFlag = true;
+			blocElement.attr({
+				class: 'type'+ typeResult + ' actionWall possiblesMoves',
+				'data-type': typeResult
+			});
+			
+			$player.find('.miningBar').fadeOut(250);
+
+		});
+
+		return typeResult;
+	};
 };
 // END PLAYER
 
@@ -308,9 +330,6 @@ function update() {
 
 // Auto start for test
 (function start() {
-
-	// Set the cursor - ToDo : move it in player or game class object
-	customcursor($game,'normal');
 
 	// Radom level :
 	// level = new LevelGeneration(Math.floor(Math.random() * 6) + 6, Math.floor(Math.random() * 6) + 6);
@@ -341,6 +360,8 @@ function update() {
 			var destinationY = parseInt($this.css('top'),10) + (player.settings.baseMap/2) - player.height/2;
 			var destinationX = parseInt($this.css('left'),10) + (player.settings.baseMap/2) - player.width/2;
 			var positionIDWall = parseInt($this.css('z-index'),10);
+			var dataCol = parseInt($(this).attr('data-col'),10);
+			var dataRow = parseInt($(this).attr('data-row'),10);
 
 			if ($this.hasClass('possiblesMoves')) {
 				
@@ -352,23 +373,8 @@ function update() {
 				// Move position
 				player.move(destinationY,destinationX,positionIDWall);
 
-				// MINE BLOCK
-				// var dataCol = parseInt($(this).attr('data-col'),10);
-				// var dataRow = parseInt($(this).attr('data-row'),10);
-
-				console.log('mining');
-				player.actionWallFlag = false;
-
-				setTimeout(function() {
-
-					player.actionWallFlag = true;
-					$this.removeClass('impossiblesMoves minable').addClass('possiblesMoves');
-			
-				}, 1000);
-
-				
-
-				
+				// Mine block & modify the level
+				newGame.modifyWall(dataCol, dataRow, player.mining(dataCol, dataRow, $this));
 			
 			} else {
 
