@@ -19,57 +19,62 @@ Number.prototype.clamp = function(min, max) {
 
 
 
+$(document).ready(function() {
+
+	// Get the dom elements (TODO: Create them on the fly)
+	var $game = $('#gameZone');
+
+	// Save dom elements in the gameSettings
+	gameSettings.DomWall = {};
+
+	gameSettings.DomWall.game = $game;
+	gameSettings.DomWall.levelsLayer = $game.find('#levelsLayer');
+	gameSettings.DomWall.actionLayer = $game.find('#actionLayer');
+	gameSettings.DomWall.allLayers = $game.find('#levelsLayer, #actionLayer, #playerTriggerLayer');
+	gameSettings.DomWall.player = $game.find('#player');
+	gameSettings.DomWall.playerSprite = $game.find('#playerSprite');
+	gameSettings.DomWall.playerTrigger = $game.find('#playerTrigger');
 
 
-// jquery get dom elems
-var $game = $('#gameZone');
-var $levelsLayer = $game.find('#levelsLayer');
-var $actionLayer = $game.find('#actionLayer');
-var $allLayers = $game.find('#levelsLayer, #actionLayer, #playerTriggerLayer');
-var $player = $game.find('#player');
-var $playerSprite = $player.find('#playerSprite');
-var $playerTrigger = $game.find('#playerTrigger');
 
 
-// check updates status and animations
-function update() {
-	
-}
+	// Check updates status and animations
+	function update() {
+		
+	}
 
-// Auto start for test
-(function start() {
+	// Auto start for test
+	function start() {
+		// Radom level :
+		// level = new LevelGeneration(Math.floor(Math.random() * 6) + 6, Math.floor(Math.random() * 6) + 6);
+		
+		// Set a static level
+		gameSettings.currentLevel = level_test_0;
 
-	// Radom level :
-	// level = new LevelGeneration(Math.floor(Math.random() * 6) + 6, Math.floor(Math.random() * 6) + 6);
-	
-	// Set a static level
-	gameSettings.currentLevel = level_test_0;
+		// Create a new Game - auto init
+		var newGame = new Game().init(gameSettings);
 
-	// Create a new game
-	var newGame = new Game(gameSettings);
+		// Create a new Player - auto init
+		var player = new Player().init(gameSettings);
 
-	// Player set - with the game settings at this moment
-	var player = new Player(gameSettings);
-	
-	// Draw walls
-	newGame.drawCollisionWalls();
+		// Click on a floor
+		gameSettings.DomWall.actionLayer.find('.actionWall').on('click', function() {
+			var dataCol = parseInt($(this).attr('data-col'),10);
+			var dataRow = parseInt($(this).attr('data-row'),10);
 
-	// Init the player
-	player.init();
-	
-	// Click on a wall (or floor case)
-	$actionLayer.find('.actionWall').on('click', function() {
-		var dataCol = parseInt($(this).attr('data-col'),10);
-		var dataRow = parseInt($(this).attr('data-row'),10);
+			// Move the player and update the level map
+			newGame.modifyWall(dataCol, dataRow, player.moving($(this)));
+		});
 
-		// Move the player and update the level map
-		newGame.modifyWall(dataCol, dataRow, player.moving($(this)));
-	});
+		// Drag and drop gamezone
+		gameSettings.DomWall.game.draggable();
 
-	//Drag and drop gamezone
-	$game.draggable();
+		// Animation Cycle
+		setInterval(function() {
+			update();
+		}, 1000/newGame.fps);
+	};
 
-	setInterval(function() {
-		update();
-	}, 1000/newGame.fps);
-})();
+	//Demo temp
+	start();
+});

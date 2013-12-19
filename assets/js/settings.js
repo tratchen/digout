@@ -1,5 +1,6 @@
 
 var gameSettings = {
+	
 	gameWidth: 800,
 	gameHeight: 600,
 	baseMap: 96,

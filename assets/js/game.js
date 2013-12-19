@@ -2,9 +2,13 @@
 	GAME
 ==========*/
 
-var Game = function(settings) {
+var Game = function() {
 	
-	this.settings = settings;
+	this.init = function(settings) {
+		this.settings = settings;
+		this.drawCollisionWalls();
+		return this;
+	};
 
 	this.drawCollisionWalls = function() {
 
@@ -35,18 +39,18 @@ var Game = function(settings) {
 
 				// place elements
 				wallsDiv.appendTo(collisionWallDiv);
-				$levelsLayer.append(collisionWallDiv.addClass('collisionWall'));
-				$actionLayer.append(actionWallDiv.addClass('actionWall'));
+				this.settings.DomWall.levelsLayer.append(collisionWallDiv.addClass('collisionWall'));
+				this.settings.DomWall.actionLayer.append(actionWallDiv.addClass('actionWall'));
 			}
 		}
 
-		$levelsLayer.css({
+		this.settings.DomWall.levelsLayer.css({
 			width: this.settings.gameWidth,
 			height: this.settings.gameHeight
 		});
 	};
 
 	this.modifyWall = function(col, row, type) {
-		settings.currentLevel[row][col] = type;
-	}
+		this.settings.currentLevel[row][col] = type;
+	};
 };
