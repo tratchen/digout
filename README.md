@@ -1,5 +1,7 @@
 #digout - HTML5 Short Game
 
+<http://copycut.github.io/digout/>
+
 ##objectifs du jeu
 
 * Trouver la clé du niveau pour progresser sans mourrir
