@@ -73,7 +73,7 @@ $(document).ready(function() {
 		setInterval(function() {
 			update();
 		}, 1000/newGame.fps);
-	};
+	}
 
 	//Demo temp
 	start();
