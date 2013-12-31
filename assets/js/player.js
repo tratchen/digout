@@ -30,8 +30,8 @@ var Player = function() {
 
 		this.width = this.settings.baseMap;
 		this.height = this.settings.baseMap;
-		this.x = parseInt(this.settings.DomWall.actionLayer.find('.type4').css('left'),10) || 0;
-		this.y = parseInt(this.settings.DomWall.actionLayer.find('.type4').css('top'),10) || 0;
+		this.x = parseInt(this.settings.DomWall.actionLayer.find('.entrance').css('left'),10) || 0;
+		this.y = parseInt(this.settings.DomWall.actionLayer.find('.entrance').css('top'),10) || 0;
 		this.sprite(this.state);
 		this.draw();
 
@@ -106,7 +106,7 @@ var Player = function() {
 		var possiblesActionsLength = this.possiblesActions.length;
 
 		// reset
-		this.settings.DomWall.actionLayer.find('.actionWall').removeClass('possiblesMoves impossiblesMoves minable');
+		this.settings.DomWall.actionLayer.find('.actionWall').removeClass('possiblesMoves impossiblesMoves digout');
 
 		for (i = 0; i < possiblesMovesLength; i++) {
 			for (j = 0; j < this.possiblesMoves[i].length; j++) {
@@ -114,9 +114,8 @@ var Player = function() {
 					var aroundRow = i + row - 2;
 					var aroundCol = j + col - 2;
 					var targetWall = this.settings.DomWall.actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"]');
-					var targetWallAttribute = this.settings.wallTypes[targetWall.attr('class').split(/\s+/)[0]];
 
-					targetWall.addClass(targetWallAttribute);
+					targetWall.addClass(this.settings.walls[targetWall.attr('data-type')].action);
 				}
 			}
 		}
@@ -133,15 +132,15 @@ var Player = function() {
 		// previens le glitch avant le déplacement 
 		if (Z - oldZIndex >= 9) {
 			this.settings.DomWall.player.css({
-				zIndex: Z+1
+				zIndex: Z + 1
 			});
 		} else if (Z - oldZIndex < -9)  {
 			this.settings.DomWall.player.css({
-				zIndex: Z+11
+				zIndex: Z + 11
 			});
 		} else {
 			this.settings.DomWall.player.css({
-				zIndex: Z+9
+				zIndex: Z + 9
 			});
 		}
 
@@ -149,7 +148,7 @@ var Player = function() {
 		this.settings.DomWall.player.animate({
 			top: Y,
 			left: X,
-			zIndex: Z+1
+			zIndex: Z + 1
 		},this.baseSpeed, function() {
 			that.x = X;
 			that.y = Y;
@@ -165,20 +164,44 @@ var Player = function() {
 
 		// move the "camera"
 		this.settings.DomWall.allLayers.stop().animate({
-			top: this.settings.gameWidth/2-(Y + this.settings.baseMap),
-			left: this.settings.gameHeight/2-(X - this.settings.baseMap)
-		},this.baseSpeed*10, "easeOutExpo");
+			top: this.settings.gameWidth / 2 -(Y + this.settings.baseMap),
+			left: this.settings.gameHeight / 2 -(X - this.settings.baseMap)
+		},this.baseSpeed * 10, 'easeOutExpo');
+	};
+
+	this.resultOfTheMinigEvent = function(result) {
+		console.log('resultOfTheMinigEvent: ', result);
+
+		//switch case here
+
+		if (result === 'key') {
+			this.settings.levelKey = true;
+		}
+
+		if (result === 'poison') {
+			this.settings.poisoned = true;
+		}
+
+		if (result === 'treasure') {
+			console.log('Ho look a treasure here!');
+		}
+
+		if (result === 'gold') {
+			console.log('Mmmh gold!');
+		}
 	};
 
 	this.mining = function(blocElement, typeResult) {
-	
+
 		var that = this;
+		var blocks = this.settings.DomWall.allLayers.find('#' + blocElement);
+		var originalType = that.settings.walls[typeResult].type;
+		var typeResultClass = this.settings.walls[typeResult].afterdig[0];
+		var typeResultId = this.settings.walls[typeResult].afterdig[1];
+		var result = this.settings.walls[typeResult].result;
+		var r = [typeResultId, result];
 
-		// I must change this based on settings
-		if (typeResult === 2 || typeResult === 6) {
-			typeResult = 0;
-		}
-
+		// Stop all action until the animation's end
 		this.actionWallFlag = false;
 
 		// Mine block & modify the level
@@ -186,17 +209,13 @@ var Player = function() {
 		this.settings.DomWall.player.find('.miningBar').fadeIn(250).find('.progression').css('width',0).animate({
 			width: '100%'
 		}, 800, function() {			
-			
 			that.actionWallFlag = true;
-			blocElement.attr({
-				class: 'type'+ typeResult + ' actionWall possiblesMoves',
-				'data-type': typeResult
-			});
-			
+			blocks.removeClass(originalType).addClass(typeResultClass).attr('data-type', typeResultId);
 			that.settings.DomWall.player.find('.miningBar').fadeOut(250);
+			that.resultOfTheMinigEvent(result);
 		});
 
-		return typeResult;
+		return typeResultId;
 	};
 
 	// Let te player choose what it does when you click somewhere
@@ -212,22 +231,29 @@ var Player = function() {
 			var positionIDWall = parseInt(blocElement.css('z-index'),10);
 
 			if (blocElement.hasClass('possiblesMoves')) {
+
+				if (blocElement.hasClass('exit')) {
+					
+					// Check the levelKey status and make decisions
+					console.log("Have you the key ?", this.settings.levelKey ? "Yes, go Exit the level" : "No, the door is closed");
+				}
 				
 				//Move position
 				this.move(destinationY,destinationX,positionIDWall);
 
-			} else if (blocElement.hasClass('minable')) {
+			} else if (blocElement.hasClass('digout')) {
 
 				// Minig block
-				typeResult = this.mining(blocElement, typeResult);
+				typeResult = this.mining(blocElement.attr('id'), typeResult);
 
 				// Move position
 				this.move(destinationY,destinationX,positionIDWall);
-			
+
 			} else {
 
 				// Can't move there
 				console.log('no moving possible');
+				return;
 			}
 		}
 

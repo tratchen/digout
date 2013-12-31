@@ -19,7 +19,7 @@ var Game = function() {
 		// Create wall based on the level titled map
 		for (row = 0; row < length; row++) {
 			for (col = 0; col < this.settings.currentLevel[row].length; col++) {
-								
+
 				//create empty elements
 				var wallsDiv = $(document.createElement('div')).addClass('walls');
 			
@@ -28,7 +28,7 @@ var Game = function() {
 					left: (col*this.settings.baseMap),
 					zIndex: ((row+1)*10)+col
 				}).attr({
-					class: 'type' + this.settings.currentLevel[row][col],
+					class: this.settings.walls[this.settings.currentLevel[row][col]].type,
 					id: 'wall-' + row + '-' + col,
 					"data-row": row,
 					"data-col": col,
@@ -52,5 +52,6 @@ var Game = function() {
 
 	this.modifyWall = function(col, row, type) {
 		this.settings.currentLevel[row][col] = type;
+		return this.settings.currentLevel;
 	};
 };

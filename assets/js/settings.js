@@ -6,14 +6,69 @@ var gameSettings = {
 	baseMap: 96,
 	fps: 50,
 	currentLevel: null,
+	levelKey: false,
+	poisoned: false,
 	
-	wallTypes: {
-		type0: "possiblesMoves",
-		type1: "impossiblesMoves",
-		type2: "minable",
-		type3: "impossiblesMoves",
-		type4: "possiblesMoves",
-		type5: "possiblesMoves",
-		type6: "minable"
+	walls: {
+		
+		0: {
+			type: "solidWall",
+			action: "impossiblesMoves"
+		},
+
+		1: {
+			type: "sand",
+			action: "digout",
+			result: "nothing",
+			afterdig: ["sandCleared", 996]
+		},
+
+		2: {
+			type: "sand",
+			action: "digout",
+			result: "treasure",
+			afterdig: ["sandCleared", 996]
+		},
+
+		3: {
+			type: "sand",
+			action: "digout",
+			result: "poison",
+			afterdig: ["sandCleared", 996]
+		},
+
+		4: {
+			type: "sand",
+			action: "digout",
+			result: "gold",
+			afterdig: ["sandCleared", 996]
+		},
+
+		5: {
+			type: "obstacle",
+			action: "impossiblesMoves"
+		},
+
+		996: {
+			type: "sandCleared",
+			action: "possiblesMoves"
+		},
+
+		997: {
+			type: "key",
+			action: "digout",
+			result: "key",
+			afterdig: ["sandCleared", 996]
+		},
+
+		998: {
+			type: "entrance",
+			action: "possiblesMoves"
+		},
+
+		999: {
+			type: "exit",
+			action: "possiblesMoves"
+		}
 	}
 };

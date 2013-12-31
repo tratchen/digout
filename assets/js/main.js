@@ -47,9 +47,20 @@ $(document).ready(function() {
 	function start() {
 		// Radom level :
 		// level = new LevelGeneration(Math.floor(Math.random() * 6) + 6, Math.floor(Math.random() * 6) + 6);
+		 
+		 
+		// These settings need a loading :
 		
-		// Set a static level
-		gameSettings.currentLevel = level_test_0;
+			// Set a static level
+			gameSettings.currentLevel = level_test_0;
+
+			// Set the key status of this level
+			gameSettings.levelKey = false;
+
+			// Set the poison player status
+			gameSettings.poisoned = false;
+
+		// end
 
 		// Create a new Game - auto init
 		var newGame = new Game().init(gameSettings);
@@ -57,13 +68,18 @@ $(document).ready(function() {
 		// Create a new Player - auto init
 		var player = new Player().init(gameSettings);
 
-		// Click on a floor
+		// Click on a floor bind event
 		gameSettings.DomWall.actionLayer.find('.actionWall').on('click', function() {
 			var dataCol = parseInt($(this).attr('data-col'),10);
 			var dataRow = parseInt($(this).attr('data-row'),10);
 
-			// Move the player and update the level map
-			newGame.modifyWall(dataCol, dataRow, player.moving($(this)));
+			// Move the player and update the level map and update the player level setting
+			player.settings.currentLevel = newGame.modifyWall(dataCol, dataRow, player.moving($(this)));
+
+			// Save the player settings online
+			gameSettings = player.settings;
+
+			console.log(gameSettings);
 		});
 
 		// Drag and drop gamezone

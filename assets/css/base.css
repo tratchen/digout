@@ -115,23 +115,23 @@ body {
 #gameZone #actionLayer .actionWall {
 	background: none;
 }
-/*
+
 #gameZone #actionLayer .actionWall.possiblesMoves:hover {
-	background: rgba(0,120,200,0.50);
+	background: rgba(0,120,200,0.25);
 	cursor: pointer;
 }
 
 #gameZone #actionLayer .actionWall.impossiblesMoves:hover {
-	background: rgba(250,50,000,0.50);
+	background: rgba(250,50,000,0.25);
 	cursor: default;
 }
 
-#gameZone #actionLayer .actionWall.impossiblesMoves.minable:hover {
-	background: rgba(125,200,0,0.50);
+#gameZone #actionLayer .actionWall.digout:hover {
+	background: rgba(125,200,0,0.25);
 	cursor: pointer;
 }
 
-*/
+
 
 
 
@@ -208,7 +208,9 @@ body {
 
 
 
-
+#gameZone .collisionWall {
+	background: url(../images/walls-sprites.png) 0 0 no-repeat;
+}
 
 /*DECORATION*/
 #gameZone .collisionWall .walls {
@@ -221,57 +223,52 @@ body {
 }
 
 
-
-
-/*GROUND - SAND */
-#gameZone .collisionWall.type0 {
-}
-#gameZone .collisionWall.type0 .walls {
-	background: url(../images/walls-sprites.png) 0 0 no-repeat;
-}
-
-
 /*WALLS - VERTICAL*/
-#gameZone .collisionWall.type1 {
-}
-#gameZone .collisionWall.type1 .walls {
+#gameZone .collisionWall.solidWall .walls {
 	height: 192px;
 	background: url(../images/walls-sprites.png) -192px -192px no-repeat;
 }
 
-/*ACTION - MINING*/
-#gameZone .collisionWall.type2 {
-}
 
-#gameZone .collisionWall.type2 .walls {
+/*SAND - DIGOUT*/
+#gameZone .collisionWall.sand .walls {
 	background: url(../images/walls-sprites.png) 0 -96px no-repeat;
 	height: 96px;
 }
 
 
-/*OBSTACLE - COLONNE */
-#gameZone .collisionWall.type3 {
-	background: transparent;
-}
-#gameZone .collisionWall.type3 .walls {
+/*OBSTACLE*/
+#gameZone .collisionWall.obstacle .walls {
 	background: url(../images/walls-sprites.png) 0 -192px no-repeat;
 	height: 192px;
 }
 
-/*DOOR*/
-#gameZone .collisionWall.type4 {
+
+/*SAND CLEARED */
+#gameZone .collisionWall.sandCleared .walls {
+	background: url(../images/walls-sprites.png) 0 0 no-repeat;
+}
+
+
+/*KEY*/
+#gameZone .collisionWall.key {
+	background: yellow;
+}
+
+
+/*ENTRANCE*/
+#gameZone .collisionWall.entrance {
 	background: white;
 }
 
+
 /*EXIT*/
-#gameZone .collisionWall.type5 {
+#gameZone .collisionWall.exit {
 	background: url(../images/walls-sprites.png) -192px -96px no-repeat;
 }
 
-/*KEY*/
-#gameZone .collisionWall.type6 {
-	background: yellow;
-}
+
+
 
 
 
