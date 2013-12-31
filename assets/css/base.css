@@ -116,17 +116,17 @@ body {
 	background: none;
 }
 
-#gameZone #actionLayer .actionWall.possiblesMoves:hover {
+#gameZone #actionLayer .actionWall.possiblesMoves {
 	background: rgba(0,120,200,0.25);
 	cursor: pointer;
 }
 
-#gameZone #actionLayer .actionWall.impossiblesMoves:hover {
+#gameZone #actionLayer .actionWall.impossiblesMoves {
 	background: rgba(250,50,000,0.25);
 	cursor: default;
 }
 
-#gameZone #actionLayer .actionWall.digout:hover {
+#gameZone #actionLayer .actionWall.digout {
 	background: rgba(125,200,0,0.25);
 	cursor: pointer;
 }

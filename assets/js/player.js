@@ -8,11 +8,11 @@ var Player = function() {
 	this.spriteLoop = 0;
 	this.state = "idle";
 	this.possiblesMoves = [
-		[0,0,0,0,0],
 		[0,0,1,0,0],
-		[0,1,0,1,0],
-		[0,0,1,0,0],
-		[0,0,0,0,0]
+		[0,1,1,1,0],
+		[1,1,0,1,1],
+		[0,1,1,1,0],
+		[0,0,1,0,0]
 	];
 	this.possiblesActions = [
 		[0,0,0,0,0],
@@ -30,8 +30,8 @@ var Player = function() {
 
 		this.width = this.settings.baseMap;
 		this.height = this.settings.baseMap;
-		this.x = parseInt(this.settings.DomWall.actionLayer.find('.entrance').css('left'),10) || 0;
-		this.y = parseInt(this.settings.DomWall.actionLayer.find('.entrance').css('top'),10) || 0;
+		this.x = parseInt(this.settings.DomWall.actionLayer.find('.entrance').css('left'), 10) || 0;
+		this.y = parseInt(this.settings.DomWall.actionLayer.find('.entrance').css('top'), 10) || 0;
 		this.sprite(this.state);
 		this.draw();
 
@@ -40,7 +40,7 @@ var Player = function() {
 
 	this.draw = function() {
 
-		var Z = parseInt(this.settings.DomWall.levelsLayer.find('#wall-' + parseInt( (this.y)/this.settings.baseMap,10 ) + '-' + parseInt( (this.x)/this.settings.baseMap,10 ) ).css('z-index') ,10);
+		var Z = parseInt(this.settings.DomWall.levelsLayer.find('#wall-' + parseInt( (this.y)/this.settings.baseMap, 10 ) + '-' + parseInt( (this.x)/this.settings.baseMap,10 ) ).css('z-index'), 10);
 
 		this.settings.DomWall.player.css({
 			top: this.y,
@@ -56,8 +56,8 @@ var Player = function() {
 		});
 
 		this.settings.DomWall.allLayers.css({
-			top: this.settings.gameWidth/2-(this.y + this.settings.baseMap),
-			left: this.settings.gameHeight/2-(this.x - this.settings.baseMap)
+			top: this.settings.gameWidth / 2 -(this.y + this.settings.baseMap),
+			left: this.settings.gameHeight / 2 -(this.x - this.settings.baseMap)
 		});
 
 		this.checkPossiblesMove();
@@ -78,7 +78,7 @@ var Player = function() {
 		// Anime it
 		this.spriteAnimation = setInterval(function() {
 			that.spriteAnimationLoop(rowSprite,steps);
-		}, this.baseSpeed*2);
+		}, this.baseSpeed * 2);
 	};
 
 	this.spriteAnimationLoop = function(rowSprite, steps) {
@@ -110,12 +110,88 @@ var Player = function() {
 
 		for (i = 0; i < possiblesMovesLength; i++) {
 			for (j = 0; j < this.possiblesMoves[i].length; j++) {
+
+
+				// straight line, double step & diagonals
 				if (this.possiblesMoves[i][j] === 1) {
+
 					var aroundRow = i + row - 2;
 					var aroundCol = j + col - 2;
+					var longJumpRow = aroundRow;
+					var longJumpCol = aroundCol;
+					
+					var diagRow = 0;
+					var diagCol = 0;
+					
 					var targetWall = this.settings.DomWall.actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"]');
+					var betweenJumpFloorAction;
+					var diag = false;
+					
+					// Check if 2 step or diagonals is available to move
+					if ( Math.abs(i + j - 4) === 0 || Math.abs(i + j - 4) === 2 ) {
 
-					targetWall.addClass(this.settings.walls[targetWall.attr('data-type')].action);
+						// Top
+						if (aroundRow < row) {							
+							longJumpRow = longJumpRow + 1;
+							
+							// top - left or right
+							if (aroundCol !== col) {
+								diag = true;
+								diagRow = aroundRow - row;
+							}
+						// Bottom
+						} else if (aroundRow > row) {
+							longJumpRow = longJumpRow - 1;
+							
+							if (aroundCol !== col) {
+								diag = true;
+								diagRow = aroundRow - row;
+							}
+						}
+
+						// Left
+						if (aroundCol < col) {
+							longJumpCol = longJumpCol + 1;
+
+							if (aroundRow !== row) {
+								diag = true;
+								diagCol = aroundCol - col;
+							}
+
+						// Right
+						} else if (aroundCol > col) {
+							longJumpCol = longJumpCol - 1;
+
+							if (aroundRow !== row) {
+								diag = true;
+								diagCol = aroundCol - col;
+							}
+						}
+
+						// Diagonals
+						if (diag) {
+
+							if (this.settings.walls[this.settings.DomWall.actionLayer.find('[data-row="'+(row + diagRow)+'"][data-col="'+(col)+'"]').attr('data-type')].action !== "impossiblesMoves" && this.settings.walls[this.settings.DomWall.actionLayer.find('[data-row="'+(row)+'"][data-col="'+(col + diagCol)+'"]').attr('data-type')].action !== "impossiblesMoves") {
+								targetWall.addClass(this.settings.walls[targetWall.attr('data-type')].action);
+							} else {
+								targetWall.addClass("impossiblesMoves");
+							}
+
+						// Double step straight through
+						} else {
+
+							betweenJumpFloorAction =  this.settings.walls[this.settings.DomWall.actionLayer.find('[data-row="' + longJumpRow + '"][data-col="' + longJumpCol + '"]').attr('data-type')].action;
+
+							if (betweenJumpFloorAction === "possiblesMoves") {
+								targetWall.addClass(this.settings.walls[targetWall.attr('data-type')].action);
+							} else {
+								targetWall.addClass("impossiblesMoves");
+							}
+						}
+					
+					} else {
+						targetWall.addClass(this.settings.walls[targetWall.attr('data-type')].action);
+					}
 				}
 			}
 		}
@@ -170,9 +246,11 @@ var Player = function() {
 	};
 
 	this.resultOfTheMinigEvent = function(result) {
+		// TO DO :
+		
 		console.log('resultOfTheMinigEvent: ', result);
 
-		//switch case here
+		//switch case here ? + call methods
 
 		if (result === 'key') {
 			this.settings.levelKey = true;
@@ -189,6 +267,8 @@ var Player = function() {
 		if (result === 'gold') {
 			console.log('Mmmh gold!');
 		}
+
+		return result;
 	};
 
 	this.mining = function(blocElement, typeResult) {
