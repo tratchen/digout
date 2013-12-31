@@ -247,8 +247,7 @@ var Player = function() {
 
 	this.resultOfTheMinigEvent = function(result) {
 		// TO DO :
-		
-		console.log('resultOfTheMinigEvent: ', result);
+		console.log('player.resultOfTheMinigEvent: ', result);
 
 		//switch case here ? + call methods
 
@@ -267,8 +266,6 @@ var Player = function() {
 		if (result === 'gold') {
 			console.log('Mmmh gold!');
 		}
-
-		return result;
 	};
 
 	this.mining = function(blocElement, typeResult) {

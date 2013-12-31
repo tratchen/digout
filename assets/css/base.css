@@ -47,6 +47,14 @@ body {
 	overflow: hidden;
 }
 
+#gameZone #ui p {
+	padding: 20px;
+	background: white;
+	float: left;
+	color: black;
+	margin-right: 5px;
+}
+
 /* LEVELS LAYER */
 #gameZone #playerTriggerLayer,
 #gameZone #actionLayer,

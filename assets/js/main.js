@@ -18,79 +18,83 @@ Number.prototype.clamp = function(min, max) {
 };
 
 
+var newGame;
+var player;
+var level;
 
-$(document).ready(function() {
+// Get the dom elements
+// TODO: Create them on the fly
+var $game = $('#gameZone');
 
-	// Get the dom elements (TODO: Create them on the fly)
-	var $game = $('#gameZone');
+// Save dom elements in the gameSettings
+gameSettings.DomWall = {};
 
-	// Save dom elements in the gameSettings
-	gameSettings.DomWall = {};
-
-	gameSettings.DomWall.game = $game;
-	gameSettings.DomWall.levelsLayer = $game.find('#levelsLayer');
-	gameSettings.DomWall.actionLayer = $game.find('#actionLayer');
-	gameSettings.DomWall.allLayers = $game.find('#levelsLayer, #actionLayer, #playerTriggerLayer');
-	gameSettings.DomWall.player = $game.find('#player');
-	gameSettings.DomWall.playerSprite = $game.find('#playerSprite');
-	gameSettings.DomWall.playerTrigger = $game.find('#playerTrigger');
-
+gameSettings.DomWall.game = $game;
+gameSettings.DomWall.levelsLayer = $game.find('#levelsLayer');
+gameSettings.DomWall.actionLayer = $game.find('#actionLayer');
+gameSettings.DomWall.allLayers = $game.find('#levelsLayer, #actionLayer, #playerTriggerLayer');
+gameSettings.DomWall.player = $game.find('#player');
+gameSettings.DomWall.playerSprite = $game.find('#playerSprite');
+gameSettings.DomWall.playerTrigger = $game.find('#playerTrigger');
 
 
-
-	// Check updates status and animations
-	function update() {
-		
+// Check updates status and animations
+function update() {
+	// Update the ui
+	if (gameSettings.gameRunning) {
+		newGame.UIUpdate(player.settings);
 	}
+}
 
-	// Auto start for test
-	function start() {
-		// Radom level :
-		// level = new LevelGeneration(Math.floor(Math.random() * 6) + 6, Math.floor(Math.random() * 6) + 6);
-		 
-		 
-		// These settings need a loading :
-		
-			// Set a static level
-			gameSettings.currentLevel = level_test_0;
+// Auto start for test
+function start() {
+	// Radom level :
+	// level = new LevelGeneration(Math.floor(Math.random() * 6) + 6, Math.floor(Math.random() * 6) + 6);
+	 
+	// TODO : These settings need a loading :
+	
+		// Set a static level
+		gameSettings.currentLevel = level_test_0;
 
-			// Set the key status of this level
-			gameSettings.levelKey = false;
+		// Set the key status of this level
+		gameSettings.levelKey = false;
 
-			// Set the poison player status
-			gameSettings.poisoned = false;
+		// Set the poison player status
+		gameSettings.poisoned = false;
 
-		// end
+		// After loading
+		gameSettings.gameRunning = true;
 
-		// Create a new Game - auto init
-		var newGame = new Game().init(gameSettings);
+	// end
 
-		// Create a new Player - auto init
-		var player = new Player().init(gameSettings);
+	// Create a new Game - auto init
+	newGame = new Game().init(gameSettings);
 
-		// Click on a floor bind event
-		gameSettings.DomWall.actionLayer.find('.actionWall').on('click', function() {
+	// Create a new Player - auto init
+	player = new Player().init(gameSettings);
+
+	// Click on a floor bind event
+	gameSettings.DomWall.actionLayer.find('.actionWall').on('click', function() {
+		if (gameSettings.gameRunning) {
 			var dataCol = parseInt($(this).attr('data-col'),10);
 			var dataRow = parseInt($(this).attr('data-row'),10);
 
 			// Move the player and update the level map and update the player level setting
 			player.settings.currentLevel = newGame.modifyWall(dataCol, dataRow, player.moving($(this)));
 
-			// Save the player settings online
+			// TODO : Save the player settings online
 			gameSettings = player.settings;
+		}
+	});
 
-			console.log(gameSettings);
-		});
+	// Drag and drop gamezone
+	gameSettings.DomWall.game.draggable();
 
-		// Drag and drop gamezone
-		gameSettings.DomWall.game.draggable();
+	// Animation Cycle
+	setInterval(function() {
+		update();
+	}, 1000/newGame.fps);
+}
 
-		// Animation Cycle
-		setInterval(function() {
-			update();
-		}, 1000/newGame.fps);
-	}
-
-	//Demo temp
-	start();
-});
+//Demo temp
+start();

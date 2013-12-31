@@ -1,6 +1,7 @@
 
 var gameSettings = {
 	
+	gameRunning: false,
 	gameWidth: 800,
 	gameHeight: 600,
 	baseMap: 96,
@@ -8,6 +9,7 @@ var gameSettings = {
 	currentLevel: null,
 	levelKey: false,
 	poisoned: false,
+	gold: 0,
 	
 	walls: {
 		

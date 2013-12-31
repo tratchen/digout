@@ -54,4 +54,12 @@ var Game = function() {
 		this.settings.currentLevel[row][col] = type;
 		return this.settings.currentLevel;
 	};
+
+	this.UIUpdate = function() {
+		// Update the UI based on game settings
+		// TEMPORARY TESTS
+		this.settings.DomWall.game.find('#ui .poison').html('Poison: ' + this.settings.poisoned);
+		this.settings.DomWall.game.find('#ui .gold').html('Gold: ' + this.settings.gold);
+		this.settings.DomWall.game.find('#ui .key').html('Key: ' + this.settings.levelKey);
+	};
 };
