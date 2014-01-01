@@ -74,16 +74,51 @@ function start() {
 	player = new Player().init(gameSettings);
 
 	// Click on a floor bind event
-	gameSettings.DomWall.actionLayer.find('.actionWall').on('click', function() {
+	gameSettings.DomWall.actionLayer.find('.actionWall').on('click', function(event) {
+		event.preventDefault();
+
 		if (gameSettings.gameRunning) {
-			var dataCol = parseInt($(this).attr('data-col'),10);
-			var dataRow = parseInt($(this).attr('data-row'),10);
+			var dataCol = parseInt($(this).attr('data-col'), 10);
+			var dataRow = parseInt($(this).attr('data-row'), 10);
 
 			// Move the player and update the level map and update the player level setting
 			player.settings.currentLevel = newGame.modifyWall(dataCol, dataRow, player.moving($(this)));
 
 			// TODO : Save the player settings online
 			gameSettings = player.settings;
+		}
+	});
+
+	// Move with Arrow Keys
+	$(document.documentElement).keydown(function(event) {		
+		var playerPosition = gameSettings.DomWall.player;
+		var dataRow = parseInt(playerPosition.attr('data-row'), 10);
+		var dataCol = parseInt(playerPosition.attr('data-col'), 10);
+		var moveAllowed = false;
+
+		
+		if (event.keyCode === 40) {
+			// Down
+			moveAllowed = true;
+			dataCol++;
+		} else if (event.keyCode === 38) {
+			// UP
+			moveAllowed = true;
+			dataCol--;
+		} else if (event.keyCode === 37) {
+			// Left
+			moveAllowed = true;
+			dataRow--;
+		} else if (event.keyCode === 39) {
+			// Right
+			moveAllowed = true;
+			dataRow++;
+		}
+
+		if (moveAllowed) {
+			event.preventDefault();
+			var elem = gameSettings.DomWall.actionLayer.find('.actionWall#wall-'+ dataCol +'-'+ dataRow);
+			player.settings.currentLevel = newGame.modifyWall(dataCol, dataRow, player.moving(elem));
 		}
 	});
 

@@ -62,6 +62,9 @@ var Player = function() {
 			height: this.height,
 			width: this.width,
 			zIndex: Z+1
+		}).attr({
+			'data-row': parseInt( (this.x)/this.settings.baseMap, 10 ),
+			'data-col': parseInt( (this.y)/this.settings.baseMap, 10 )
 		});
 
 		this.settings.DomWall.playerTrigger.css({
@@ -244,6 +247,9 @@ var Player = function() {
 			that.y = Y;
 			that.checkPossiblesMove();
 			that.sprite('idle');
+		}).attr({
+			'data-row': parseInt( X/that.settings.baseMap, 10 ),
+			'data-col': parseInt( Y/that.settings.baseMap, 10 )
 		});
 
 		// move the player trigger
