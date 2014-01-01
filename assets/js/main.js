@@ -9,9 +9,9 @@ Math.rand = function(min, max) {
 	return Math.floor(Math.random() * (max - min) + min);
 };
 
-Array.prototype.random = function() {
-	return this[Math.rand(0, this.length)];  
-};
+// Array.prototype.random = function() {
+// 	return this[Math.rand(0, this.length)];  
+// };
 
 Number.prototype.clamp = function(min, max) {
 	return Math.min(Math.max(this, min), max);
@@ -95,7 +95,6 @@ function start() {
 		var dataRow = parseInt(playerPosition.attr('data-row'), 10);
 		var dataCol = parseInt(playerPosition.attr('data-col'), 10);
 		var moveAllowed = false;
-
 		
 		if (event.keyCode === 40) {
 			// Down
