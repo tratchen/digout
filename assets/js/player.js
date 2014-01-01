@@ -32,10 +32,24 @@ var Player = function() {
 		this.height = this.settings.baseMap;
 		this.x = parseInt(this.settings.DomWall.actionLayer.find('.entrance').css('left'), 10) || 0;
 		this.y = parseInt(this.settings.DomWall.actionLayer.find('.entrance').css('top'), 10) || 0;
+
+		this.settings.xpRemains = Math.sqrt(this.settings.level) * 1000;
+		this.settings.xp = this.settings.xp < 1 ? 1 : this.settings.xp;
+
 		this.sprite(this.state);
 		this.draw();
 
 		return this;
+	};
+
+	this.calculateXP = function() {
+		while (this.settings.xp > this.settings.xpRemains && this.settings.level <= this.settings.maximumLevel) {
+			this.settings.xpRemains = Math.sqrt(this.settings.level) * 1000;
+			this.settings.xp = Math.floor(this.settings.xp - this.settings.xpRemains);
+			if (this.settings.level + 1 <= this.settings.maximumLevel) {
+				this.settings.level++;
+			}
+		}
 	};
 
 	this.draw = function() {
@@ -245,26 +259,51 @@ var Player = function() {
 		},this.baseSpeed * 10, 'easeOutExpo');
 	};
 
+	this.randomTreasures = function() {
+		var kindOfTreasure = this.settings.treasuresKind[Math.floor(Math.random() * this.settings.treasuresKind.length)];
+		var bonus;
+
+		// Treasure amount depend of the teasure kind and player level (if 0 -> 1 regardless of the level)
+		if (this.settings.treasures[kindOfTreasure].scale < 1) {
+			bonus = 1;
+		} else {
+			bonus = this.settings.treasures[kindOfTreasure].scale * this.settings.level;
+		}
+		
+		this.settings[kindOfTreasure] = this.settings[kindOfTreasure] + bonus;
+		this.calculateXP();
+
+		//console.log(kindOfTreasure, this.settings.treasures[kindOfTreasure], this.settings[kindOfTreasure]);
+	};
+
 	this.resultOfTheMinigEvent = function(result) {
-		// TO DO :
+		
+		// TO DO : MONSTER CASE
 		console.log('player.resultOfTheMinigEvent: ', result);
 
-		//switch case here ? + call methods
+		switch(result) {
 
-		if (result === 'key') {
+			case 'key':
 			this.settings.levelKey = true;
-		}
+			break;
 
-		if (result === 'poison') {
+			case 'poison':
 			this.settings.poisoned = true;
-		}
+			break;
 
-		if (result === 'treasure') {
-			console.log('Ho look a treasure here!');
-		}
+			case 'treasure':
+			this.randomTreasures();
+			break;
 
-		if (result === 'gold') {
-			console.log('Mmmh gold!');
+			case 'gold':
+			this.settings.gold = this.settings.gold + (this.settings.treasures.gold.scale * this.settings.level);
+			break;
+
+			case 'monster':
+			break;
+
+			default:
+			return;
 		}
 	};
 
@@ -289,8 +328,9 @@ var Player = function() {
 			that.actionWallFlag = true;
 			blocks.removeClass(originalType).addClass(typeResultClass).attr('data-type', typeResultId);
 			that.settings.DomWall.player.find('.miningBar').fadeOut(250);
-			that.resultOfTheMinigEvent(result);
 		});
+
+		this.resultOfTheMinigEvent(result);
 
 		return typeResultId;
 	};

@@ -58,8 +58,13 @@ var Game = function() {
 	this.UIUpdate = function() {
 		// Update the UI based on game settings
 		// TEMPORARY TESTS
-		this.settings.DomWall.game.find('#ui .poison').html('Poison: ' + this.settings.poisoned);
+		this.settings.DomWall.game.find('#ui .antiPoison').html('Anti-Poison: ' + this.settings.antiPoison);
+		this.settings.DomWall.game.find('#ui .poisonStatus').html('Poisoned?: ' + this.settings.poisoned);
+		this.settings.DomWall.game.find('#ui .level').html('Level: ' + this.settings.level);
+		this.settings.DomWall.game.find('#ui .life').html('PV: ' + this.settings.life);
+		this.settings.DomWall.game.find('#ui .xp').html('Xp: ' + this.settings.xp);
 		this.settings.DomWall.game.find('#ui .gold').html('Gold: ' + this.settings.gold);
-		this.settings.DomWall.game.find('#ui .key').html('Key: ' + this.settings.levelKey);
+		this.settings.DomWall.game.find('#ui .emerald').html('Emerald: ' + this.settings.emerald);
+		this.settings.DomWall.game.find('#ui .key').html('Key?: ' + this.settings.levelKey);
 	};
 };

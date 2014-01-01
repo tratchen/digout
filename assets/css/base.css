@@ -48,12 +48,16 @@ body {
 }
 
 #gameZone #ui p {
-	padding: 20px;
+	padding: 10px;
 	background: white;
 	float: left;
 	color: black;
 	margin-right: 5px;
 }
+
+
+
+
 
 /* LEVELS LAYER */
 #gameZone #playerTriggerLayer,
@@ -239,7 +243,8 @@ body {
 
 
 /*SAND - DIGOUT*/
-#gameZone .collisionWall.sand .walls {
+#gameZone .collisionWall.sand .walls,
+#gameZone .collisionWall.monster .walls {
 	background: url(../images/walls-sprites.png) 0 -96px no-repeat;
 	height: 96px;
 }
