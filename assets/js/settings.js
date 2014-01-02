@@ -9,7 +9,7 @@ var gameSettings = {
 	"currentLevel": null,
 	"levelKey": false,
 	"poisoned": false,
-	"level": 100,
+	"level": 1,
 	"maximumLevel": 100,
 	"gold": 0,
 	"emerald": 0,
