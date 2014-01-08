@@ -15,97 +15,105 @@ var gameSettings = {
 	"emerald": 0,
 	"xp": 0,
 	"life": 100,
-	"antiPoison": 0,
+	"antiPoison": 0
+};
+
+var gameComponents = {
 
 	"treasuresKind": ["antiPoison", "gold", "emerald", "life", "xp"],
 
 	"treasures": {
 		"antiPoison": {
-			"scale": 1
+			"minimal": 1,
+			"maximum": 3
 		},
 
 		"gold": {
-			"scale": 10
+			"minimal": 3,
+			"maximum": 35
 		},
 
 		"emerald": {
-			"scale": 0
+			"minimal": 1,
+			"maximum": 10
 		},
 
 		"life": {
-			"scale": 5
+			"minimal": 5,
+			"maximum": 100
 		},
 
 		"xp": {
-			"scale": 100
+			"minimal": 1000,
+			"maximum": 1000000
 		}
 	},
 	
 	"walls": {
 		
-		0: {
+		"0": {
 			"type": "solidWall",
 			"action": "impossiblesMoves"
 		},
 
-		1: {
+		"1": {
 			"type": "sand",
 			"action": "digout",
 			"result": "nothing",
 			"afterdig": ["sandCleared", 996]
 		},
 
-		2: {
+		"2": {
 			"type": "sand",
 			"action": "digout",
 			"result": "treasure",
 			"afterdig": ["sandCleared", 996]
 		},
 
-		3: {
+		"3": {
 			"type": "sand",
 			"action": "digout",
 			"result": "poison",
 			"afterdig": ["sandCleared", 996]
 		},
 
-		4: {
+		"4": {
 			"type": "sand",
 			"action": "digout",
 			"result": "gold",
 			"afterdig": ["sandCleared", 996]
 		},
 
-		5: {
+		"5": {
 			"type": "obstacle",
 			"action": "impossiblesMoves"
 		},
 
-		6: {
+		"6": {
 			"type": "monster",
 			"action": "digout",
 			"result": "monster",
 			"afterdig": ["sandCleared", 996]
 		},
 
-		996: {
+		"996": {
 			"type": "sandCleared",
 			"action": "possiblesMoves"
 		},
 
-		997: {
+		"997": {
 			"type": "key",
 			"action": "digout",
 			"result": "key",
 			"afterdig": ["sandCleared", 996]
 		},
 
-		998: {
+		"998": {
 			"type": "entrance",
 			"action": "possiblesMoves"
 		},
 
-		999: {
+		"999": {
 			"type": "exit",
 			"action": "possiblesMoves"
 		}

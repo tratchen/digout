@@ -10,13 +10,28 @@ Math.rand = function(min, max) {
 };
 
 // Array.prototype.random = function() {
-// 	return this[Math.rand(0, this.length)];  
+//	return this[Math.rand(0, this.length)];  
 // };
 
 Number.prototype.clamp = function(min, max) {
 	return Math.min(Math.max(this, min), max);
 };
 
+var saveGame = function(key, value){
+	localStorage.setItem(key, JSON.stringify(value));
+};
+
+var getSavedGame = function(key){
+	return JSON.parse(localStorage.getItem(key));
+};
+
+var easeOutCubic = function (t, b, c, d) {
+	return c*((t=t/d-1)*t*t + 1) + b;
+};
+
+var easeInCubic = function (t, b, c, d) {
+	return c*(t/=d)*t*t + b;
+};
 
 var newGame;
 var player;
@@ -27,16 +42,15 @@ var level;
 var $game = $('#gameZone');
 
 // Save dom elements in the gameSettings
-gameSettings.DomWall = {};
+gameComponents.DomWall = {};
 
-gameSettings.DomWall.game = $game;
-gameSettings.DomWall.levelsLayer = $game.find('#levelsLayer');
-gameSettings.DomWall.actionLayer = $game.find('#actionLayer');
-gameSettings.DomWall.allLayers = $game.find('#levelsLayer, #actionLayer, #playerTriggerLayer');
-gameSettings.DomWall.player = $game.find('#player');
-gameSettings.DomWall.playerSprite = $game.find('#playerSprite');
-gameSettings.DomWall.playerTrigger = $game.find('#playerTrigger');
-
+gameComponents.DomWall.game = $game;
+gameComponents.DomWall.levelsLayer = $game.find('#levelsLayer');
+gameComponents.DomWall.actionLayer = $game.find('#actionLayer');
+gameComponents.DomWall.allLayers = $game.find('#levelsLayer, #actionLayer, #playerTriggerLayer');
+gameComponents.DomWall.player = $game.find('#player');
+gameComponents.DomWall.playerSprite = $game.find('#playerSprite');
+gameComponents.DomWall.playerTrigger = $game.find('#playerTrigger');
 
 // Check updates status and animations
 function update() {
@@ -48,33 +62,43 @@ function update() {
 
 // Auto start for test
 function start() {
-	// Radom level :
-	// level = new LevelGeneration(Math.floor(Math.random() * 6) + 6, Math.floor(Math.random() * 6) + 6);
 	 
-	// TODO : These settings need a loading :
-	
-		// Set a static level
-		gameSettings.currentLevel = level_test_0;
+	if (localStorage) {
 
-		// Set the key status of this level
-		gameSettings.levelKey = false;
+		if (localStorage.save) {
+			
+			gameSettings = getSavedGame('save');
+			
+			console.log('There is a saved game: ', gameSettings);
+		
+		} else {
+			console.log('No saved game, new party.');
+			
+			// Radom level :
+			// level = new LevelGeneration(Math.floor(Math.random() * 6) + 6, Math.floor(Math.random() * 6) + 6);
 
-		// Set the poison player status
-		gameSettings.poisoned = false;
+			// Set a static level
+			gameSettings.currentLevel = level_test_0;
 
-		// After loading
-		gameSettings.gameRunning = true;
+			// Set the key status of this level
+			gameSettings.levelKey = false;
 
-	// end
+			// Set the poison player status
+			gameSettings.poisoned = false;
+
+			// After loading
+			gameSettings.gameRunning = true;
+		}
+	}
 
 	// Create a new Game - auto init
-	newGame = new Game().init(gameSettings);
+	newGame = new Game().init(gameSettings, gameComponents);
 
 	// Create a new Player - auto init
-	player = new Player().init(gameSettings);
+	player = new Player().init(gameSettings, gameComponents);
 
 	// Click on a floor bind event
-	gameSettings.DomWall.actionLayer.find('.actionWall').on('click', function(event) {
+	gameComponents.DomWall.actionLayer.find('.actionWall').on('click', function(event) {
 		event.preventDefault();
 
 		if (gameSettings.gameRunning) {
@@ -86,12 +110,14 @@ function start() {
 
 			// TODO : Save the player settings online
 			gameSettings = player.settings;
+			console.log(gameSettings);
+			saveGame('save', gameSettings);
 		}
 	});
 
 	// Move with Arrow Keys
 	$(document.documentElement).keydown(function(event) {		
-		var playerPosition = gameSettings.DomWall.player;
+		var playerPosition = gameComponents.DomWall.player;
 		var dataRow = parseInt(playerPosition.attr('data-row'), 10);
 		var dataCol = parseInt(playerPosition.attr('data-col'), 10);
 		var moveAllowed = false;
@@ -116,13 +142,13 @@ function start() {
 
 		if (moveAllowed) {
 			event.preventDefault();
-			var elem = gameSettings.DomWall.actionLayer.find('.actionWall#wall-'+ dataCol +'-'+ dataRow);
+			var elem = gameComponents.DomWall.actionLayer.find('.actionWall#wall-'+ dataCol +'-'+ dataRow);
 			player.settings.currentLevel = newGame.modifyWall(dataCol, dataRow, player.moving(elem));
 		}
 	});
 
 	// Drag and drop gamezone
-	gameSettings.DomWall.game.draggable();
+	gameComponents.DomWall.game.draggable();
 
 	// Animation Cycle
 	setInterval(function() {

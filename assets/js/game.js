@@ -4,8 +4,9 @@
 
 var Game = function() {
 	
-	this.init = function(settings) {
+	this.init = function(settings, gameComponents) {
 		this.settings = settings;
+		this.gameComponents = gameComponents;
 		this.drawCollisionWalls();
 		return this;
 	};
@@ -28,7 +29,7 @@ var Game = function() {
 					left: (col*this.settings.baseMap),
 					zIndex: ((row+1)*10)+col
 				}).attr({
-					class: this.settings.walls[this.settings.currentLevel[row][col]].type,
+					class: this.gameComponents.walls[this.settings.currentLevel[row][col]].type,
 					id: 'wall-' + row + '-' + col,
 					"data-row": row,
 					"data-col": col,
@@ -39,12 +40,12 @@ var Game = function() {
 
 				// place elements
 				wallsDiv.appendTo(collisionWallDiv);
-				this.settings.DomWall.levelsLayer.append(collisionWallDiv.addClass('collisionWall'));
-				this.settings.DomWall.actionLayer.append(actionWallDiv.addClass('actionWall'));
+				this.gameComponents.DomWall.levelsLayer.append(collisionWallDiv.addClass('collisionWall'));
+				this.gameComponents.DomWall.actionLayer.append(actionWallDiv.addClass('actionWall'));
 			}
 		}
 
-		this.settings.DomWall.levelsLayer.css({
+		this.gameComponents.DomWall.levelsLayer.css({
 			width: this.settings.gameWidth,
 			height: this.settings.gameHeight
 		});
@@ -58,13 +59,13 @@ var Game = function() {
 	this.UIUpdate = function() {
 		// Update the UI based on game settings
 		// TEMPORARY TESTS
-		this.settings.DomWall.game.find('#ui .antiPoison').html('Anti-Poison: ' + this.settings.antiPoison);
-		this.settings.DomWall.game.find('#ui .poisonStatus').html('Poisoned?: ' + this.settings.poisoned);
-		this.settings.DomWall.game.find('#ui .level').html('Level: ' + this.settings.level);
-		this.settings.DomWall.game.find('#ui .life').html('PV: ' + this.settings.life);
-		this.settings.DomWall.game.find('#ui .xp').html('Xp: ' + this.settings.xp);
-		this.settings.DomWall.game.find('#ui .gold').html('Gold: ' + this.settings.gold);
-		this.settings.DomWall.game.find('#ui .emerald').html('Emerald: ' + this.settings.emerald);
-		this.settings.DomWall.game.find('#ui .key').html('Key?: ' + this.settings.levelKey);
+		this.gameComponents.DomWall.game.find('#ui .antiPoison').html('Anti-Poison: ' + this.settings.antiPoison);
+		this.gameComponents.DomWall.game.find('#ui .poisonStatus').html('Poisoned?: ' + this.settings.poisoned);
+		this.gameComponents.DomWall.game.find('#ui .level').html('Level: ' + this.settings.level);
+		this.gameComponents.DomWall.game.find('#ui .life').html('PV: ' + this.settings.life);
+		this.gameComponents.DomWall.game.find('#ui .xp').html('Xp: ' + this.settings.xp);
+		this.gameComponents.DomWall.game.find('#ui .gold').html('Gold: ' + this.settings.gold);
+		this.gameComponents.DomWall.game.find('#ui .emerald').html('Emerald: ' + this.settings.emerald);
+		this.gameComponents.DomWall.game.find('#ui .key').html('Key?: ' + this.settings.levelKey);
 	};
 };
