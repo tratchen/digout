@@ -47,17 +47,17 @@ var Player = function() {
 	};
 
 	this.calculateXP = function() {
-		while (this.settings.xp > this.settings.xpRemains && this.settings.level <= this.settings.maximumLevel) {
+		while (this.settings.xp > this.settings.xpRemains && this.settings.level <= this.gameComponents.maximumLevel) {
 			
 			var minXP = this.gameComponents.treasure.xp.minimal;
 			var maxXP = this.gameComponents.treasure.xp.maximum;
-			var maxLevel = this.settings.maximumLevel;
+			var maxLevel = this.gameComponents.maximumLevel;
 
 			this.settings.xpRemains = easeInCubic(this.settings.currentLevel, minXP, maxXP, maxLevel);
 			
 			this.settings.xp = Math.floor(this.settings.xp - this.settings.xpRemains);
 			
-			if (this.settings.level + 1 <= this.settings.maximumLevel) {
+			if (this.settings.level + 1 <= this.gameComponents.maximumLevel) {
 				this.settings.level++;
 			}
 		}
@@ -278,17 +278,16 @@ var Player = function() {
 
 	this.randomTreasures = function() {
 		// Treasure amount depend of the teasure kind and player level
-		
-		var kindOfTreasure = this.gameComponents.treasuresKind[Math.floor(Math.random() * this.gameComponents.treasuresKind.length)];
-		var minTreasure = this.gameComponents[kindOfTreasure].minimal;
-		var maxTreasure = this.gameComponents[kindOfTreasure].maximum;
-		var maxLevel = this.settings.maximumLevel;
-		var bonus = easeOutCubic(this.currentLevel, minTreasure, maxTreasure, maxLevel);
+		var random = Math.floor(Math.random() * (this.gameComponents.treasuresKind.length -1) );
+		var kindOfTreasure = this.gameComponents.treasuresKind[random];
+		var minTreasure = this.gameComponents.treasures[kindOfTreasure].minimal;
+		var maxTreasure = this.gameComponents.treasures[kindOfTreasure].maximum;
+		var maxLevel = this.gameComponents.maximumLevel;
+		var bonus = Math.floor(easeOutCubic(this.settings.level, minTreasure, maxTreasure, maxLevel));
 
 		this.settings[kindOfTreasure] = this.settings[kindOfTreasure] + bonus;
 		
 		this.calculateXP();
-		//console.log(kindOfTreasure, this.settings.treasures[kindOfTreasure], this.settings[kindOfTreasure]);
 	};
 
 	this.resultOfTheMinigEvent = function(result) {

@@ -10,7 +10,6 @@ var gameSettings = {
 	"levelKey": false,
 	"poisoned": false,
 	"level": 1,
-	"maximumLevel": 100,
 	"gold": 0,
 	"emerald": 0,
 	"xp": 0,
@@ -19,6 +18,8 @@ var gameSettings = {
 };
 
 var gameComponents = {
+
+	"maximumLevel": 100,
 
 	"treasuresKind": ["antiPoison", "gold", "emerald", "life", "xp"],
 
