@@ -53,7 +53,7 @@ var Player = function() {
 			var maxXP = this.gameComponents.treasure.xp.maximum;
 			var maxLevel = this.gameComponents.maximumLevel;
 
-			this.settings.xpRemains = easeInCubic(this.settings.currentLevel, minXP, maxXP, maxLevel);
+			this.settings.xpRemains = Math.floor(easeInCubic(this.settings.currentLevel, minXP, maxXP, maxLevel));
 			
 			this.settings.xp = Math.floor(this.settings.xp - this.settings.xpRemains);
 			
