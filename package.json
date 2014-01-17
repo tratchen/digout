@@ -1,6 +1,6 @@
 {
   "name": "digout",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Didier Chartrain",
   "devDependencies": {
     "grunt": "~0.4.1",

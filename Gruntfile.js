@@ -86,6 +86,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-browser-sync');
 
 	// Register the default tasks.
-	grunt.registerTask('default', ['browser_sync', 'watch']);
+	grunt.registerTask('default', ['watch']);
+	grunt.registerTask('sync', ['browser_sync', 'watch']);
 	grunt.registerTask('debug', ['jshint']);
 };

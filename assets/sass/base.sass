@@ -1,0 +1,304 @@
+@import compass/reset
+@import compass/css3
+@import fonts.css
+@import _variables
+@import _mixins
+@import _generics
+
+body
+	overflow: hidden
+	background: $black
+
+
+
+.legend
+	float: left
+	padding: 10px
+	margin: 30px
+	border-radius: 5px
+	background: white
+	font-size: 12px
+	line-height: 14px
+
+.outherGameZone
+	position: fixed
+	top: 50%
+	left: 50%
+	height: 600px
+	width: 800px
+	margin: -300px 0 0 -400px
+	overflow: hidden
+	background: black
+	cursor: move
+
+
+#gameZone
+	position: relative
+	cursor: default
+
+
+	#ui
+		position: fixed
+		top: 50%
+		left: 50%
+		width: 800px
+		height: 600px
+		margin: -300px 0 0 -400px
+		z-index: 997
+		overflow: hidden
+
+
+		p
+			padding: 10px
+			background: white
+			float: left
+			color: black
+			margin-right: 5px
+
+
+
+
+
+
+	/* LEVELS LAYER */
+	#playerTriggerLayer,
+	#actionLayer,
+	#decorationLayer,
+	#levelsLayer
+		z-index: 1
+		position: absolute
+		top: 0
+		left: 0
+		height: 1600px
+		width: 1600px
+		margin: 0
+
+
+	/* hide by default */
+	#actionLayer
+		display: block
+		z-index: 998
+
+
+
+/*CURSOR*/
+
+#mycursor
+	position: absolute
+	display: none
+	cursor: none
+	height: 48px
+	width: 48px
+	background: url(../images/cursors.png) 0 0 no-repeat
+	z-index: 999
+	
+	&.normal
+		background: url(../images/cursors.png) 0 0 no-repeat
+
+
+
+
+
+
+
+
+
+
+
+
+#gameZone
+	#levelsLayer
+		/*background: url(../images/ground.png) repeat*/
+		background: #b09f84
+ 
+
+	/*COLLISION WALL (insibles) rotated*/
+	.collisionWall,
+	.actionWall
+		position: absolute
+		height: 96px
+		width: 96px
+
+
+	.actionWall
+		background: none
+
+
+	#actionLayer
+		.actionWall
+			background: none
+
+			&.possiblesMoves
+				background: rgba(0,120,200,0.25)
+				cursor: pointer
+
+			&.impossiblesMoves
+				background: rgba(250,50,000,0.25)
+				cursor: default
+
+			&.digout
+				background: rgba(125,200,0,0.25)
+				cursor: pointer
+
+
+
+
+
+
+
+
+
+
+	/* PLAYER */
+	#playerTriggerLayer
+		display: none
+		z-index: 999
+
+
+	#playerTrigger
+		position: absolute
+		top: 0
+		left: 0
+		height: 96px
+		width: 96px
+		background: rgba(0,0,0,0.20)
+		margin: -46px 0 0 -30px
+		cursor: pointer
+		z-index: 999
+
+
+	#player
+		position: absolute
+		top: 0
+		left: 0
+		background: url(../images/player-shadow.png) center 12px no-repeat
+
+
+
+		#playerSprite
+			position: absolute
+			bottom: 0
+			left: 0
+			height: 120px
+			width: 96px
+			background: url(../images/entities-sprites.png) 0 0 no-repeat
+			border-radius: 5px
+
+
+		.miningBar
+			display: none
+			-webkit-box-sizing: border-box
+			box-sizing: border-box
+			position: absolute
+			top: -25px
+			left: 0
+			width: 100%
+			height: 10px
+			border: 2px solid green
+			z-index: 99
+			background: rgba(0,255,125,0.75)
+			overflow: hidden
+
+
+			.progression
+				position: absolute
+				top: 0
+				left: 0
+				height: 10px
+				background: green
+				z-index: 99
+
+
+
+
+
+
+
+
+
+
+
+	.collisionWall
+		background: url(../images/walls-sprites.png) 0 0 no-repeat
+
+
+		/*DECORATION*/
+		.walls
+			display: block
+			position: absolute
+			width: 96px
+			height: 96px
+			left: 0
+			bottom: 0
+
+
+
+		/*WALLS - VERTICAL*/
+		&.solidWall .walls
+			height: 192px
+			background: url(../images/walls-sprites.png) -192px -192px no-repeat
+
+
+
+		/*SAND - DIGOUT*/
+		&.sand .walls,
+		&.monster .walls
+			background: url(../images/walls-sprites.png) 0 -96px no-repeat
+			height: 96px
+
+
+
+		/*OBSTACLE*/
+		&.obstacle .walls
+			background: url(../images/walls-sprites.png) 0 -192px no-repeat
+			height: 192px
+
+
+
+		/*SAND CLEARED */
+		&.sandCleared .walls
+			background: url(../images/walls-sprites.png) 0 0 no-repeat
+
+
+
+		/*KEY*/
+		&.key
+			background: yellow
+
+
+
+		/*ENTRANCE*/
+		&.entrance
+			background: white
+
+
+
+		/*EXIT*/
+		&.exit
+			background: url(../images/walls-sprites.png) -192px -96px no-repeat
+
+
+
+
+
+// Medium Screens (ipad)
+@media screen and (min-width:768px)
+	body
+		font-size: 0.9em
+
+
+// Desktop Screens (960 and more)
+@media screen and (min-width:$siteWidth)
+	body
+		font-size: 0.8em
+
+	.wrap
+		width: $siteWidth
+	
+// Retina screen
+@media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-resolution: 2dppx)
+
+
+
+
+
