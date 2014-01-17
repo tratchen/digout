@@ -5,6 +5,13 @@
 @import _mixins
 @import _generics
 
+
+$walls: url(../images/walls-sprites-16bit.png)
+$player: url(../images/entities-sprites-16bit.png)
+$gameWidth: 800px
+$gameHeight: 600px
+$baseGrid: 72px
+
 body
 	overflow: hidden
 	background: $black
@@ -22,11 +29,10 @@ body
 
 .outherGameZone
 	position: fixed
-	top: 50%
-	left: 50%
-	height: 600px
-	width: 800px
-	margin: -300px 0 0 -400px
+	top: 0
+	left: 0
+	height: 100%
+	width: 100%
 	overflow: hidden
 	background: black
 	cursor: move
@@ -39,11 +45,10 @@ body
 
 	#ui
 		position: fixed
-		top: 50%
-		left: 50%
-		width: 800px
-		height: 600px
-		margin: -300px 0 0 -400px
+		top: 0
+		left: 0
+		height: 100%
+		width: 100%
 		z-index: 997
 		overflow: hidden
 
@@ -69,8 +74,8 @@ body
 		position: absolute
 		top: 0
 		left: 0
-		height: 1600px
-		width: 1600px
+		height: 100%
+		width: 100%
 		margin: 0
 
 
@@ -116,8 +121,8 @@ body
 	.collisionWall,
 	.actionWall
 		position: absolute
-		height: 96px
-		width: 96px
+		height: $baseGrid
+		width: $baseGrid
 
 
 	.actionWall
@@ -129,15 +134,15 @@ body
 			background: none
 
 			&.possiblesMoves
-				background: rgba(0,120,200,0.25)
+				//background: rgba(0,120,200,0.25)
 				cursor: pointer
 
 			&.impossiblesMoves
-				background: rgba(250,50,000,0.25)
+				//background: rgba(250,50,000,0.25)
 				cursor: default
 
 			&.digout
-				background: rgba(125,200,0,0.25)
+				//background: rgba(125,200,0,0.25)
 				cursor: pointer
 
 
@@ -159,8 +164,8 @@ body
 		position: absolute
 		top: 0
 		left: 0
-		height: 96px
-		width: 96px
+		height: $baseGrid
+		width: $baseGrid
 		background: rgba(0,0,0,0.20)
 		margin: -46px 0 0 -30px
 		cursor: pointer
@@ -179,9 +184,9 @@ body
 			position: absolute
 			bottom: 0
 			left: 0
-			height: 120px
-			width: 96px
-			background: url(../images/entities-sprites.png) 0 0 no-repeat
+			height: 96px
+			width: $baseGrid
+			background: $player 0 0 no-repeat
 			border-radius: 5px
 
 
@@ -219,15 +224,15 @@ body
 
 
 	.collisionWall
-		background: url(../images/walls-sprites.png) 0 0 no-repeat
+		background: $walls 0 0 no-repeat
 
 
 		/*DECORATION*/
 		.walls
 			display: block
 			position: absolute
-			width: 96px
-			height: 96px
+			width: $baseGrid
+			height: $baseGrid
 			left: 0
 			bottom: 0
 
@@ -235,29 +240,29 @@ body
 
 		/*WALLS - VERTICAL*/
 		&.solidWall .walls
-			height: 192px
-			background: url(../images/walls-sprites.png) -192px -192px no-repeat
+			height: $baseGrid*2
+			background: $walls (-$baseGrid*2) (-$baseGrid*2) no-repeat
 
 
 
 		/*SAND - DIGOUT*/
 		&.sand .walls,
 		&.monster .walls
-			background: url(../images/walls-sprites.png) 0 -96px no-repeat
-			height: 96px
+			background: $walls 0 (-$baseGrid) no-repeat
+			height: $baseGrid
 
 
 
 		/*OBSTACLE*/
 		&.obstacle .walls
-			background: url(../images/walls-sprites.png) 0 -192px no-repeat
-			height: 192px
+			background: $walls 0 (-$baseGrid*2) no-repeat
+			height: $baseGrid*2
 
 
 
 		/*SAND CLEARED */
 		&.sandCleared .walls
-			background: url(../images/walls-sprites.png) 0 0 no-repeat
+			background: $walls 0 0 no-repeat
 
 
 
@@ -275,7 +280,7 @@ body
 
 		/*EXIT*/
 		&.exit
-			background: url(../images/walls-sprites.png) -192px -96px no-repeat
+			background: $walls (-$baseGrid*2) (-$baseGrid*4) no-repeat
 
 
 

@@ -4,7 +4,7 @@ var gameSettings = {
 	"gameRunning": false,
 	"gameWidth": 800,
 	"gameHeight": 600,
-	"baseMap": 96,
+	"baseMap": 72,
 	"fps": 50,
 	"currentLevel": null,
 	"levelKey": false,
