@@ -8,6 +8,7 @@
 
 $walls: url(../images/walls-sprites-16bit.png)
 $player: url(../images/entities-sprites-16bit.png)
+
 $gameWidth: 800px
 $gameHeight: 600px
 $baseGrid: 72px
@@ -237,20 +238,22 @@ body
 			bottom: 0
 
 
-
 		/*WALLS - VERTICAL*/
 		&.solidWall .walls
 			height: $baseGrid*2
 			background: $walls (-$baseGrid*2) (-$baseGrid*2) no-repeat
 
 
-
-		/*SAND - DIGOUT*/
+		/*SAND - random events & key - DIGOUT*/
 		&.sand .walls,
-		&.monster .walls
+		&.monster .walls,
+		&.key .walls
 			background: $walls 0 (-$baseGrid) no-repeat
 			height: $baseGrid
 
+		/*SAND CLEARED */
+		&.sandCleared .walls
+			background: $walls 0 0 no-repeat
 
 
 		/*OBSTACLE*/
@@ -258,29 +261,14 @@ body
 			background: $walls 0 (-$baseGrid*2) no-repeat
 			height: $baseGrid*2
 
-
-
-		/*SAND CLEARED */
-		&.sandCleared .walls
-			background: $walls 0 0 no-repeat
-
-
-
-		/*KEY*/
-		&.key
-			background: yellow
-
-
-
 		/*ENTRANCE*/
 		&.entrance
-			background: white
-
+			background: $walls (-$baseGrid*3) (-$baseGrid) no-repeat
 
 
 		/*EXIT*/
 		&.exit
-			background: $walls (-$baseGrid*2) (-$baseGrid*4) no-repeat
+			background: $walls (-$baseGrid*2) (-$baseGrid) no-repeat
 
 
 
