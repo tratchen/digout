@@ -1,5 +1,5 @@
 /*==========
-	GAME
+	WALLS
 ==========*/
 
 var Walls = function() {
@@ -49,10 +49,5 @@ var Walls = function() {
 			width: this.settings.gameWidth,
 			height: this.settings.gameHeight
 		});
-	};
-
-	this.modifyWall = function(col, row, type) {
-		this.settings.currentLevel[row][col] = type;
-		return this.settings.currentLevel;
 	};
 };

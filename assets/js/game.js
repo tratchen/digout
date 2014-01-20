@@ -1,6 +1,6 @@
-
-
-// GAME CLASS
+/*==========
+	GAME
+==========*/
 
 var Game = function(gameSettings, gameComponents) {
 
@@ -35,6 +35,14 @@ var Game = function(gameSettings, gameComponents) {
 		});
 	};
 
+	this.updating = function() {
+		
+		this.player.calculateXP();
+		this.player.spriteAnimation();
+
+		this.UIUpdate();
+	};
+
 	this.UIUpdate = function() {
 		// Update the UI based on game settings
 		// TEMPORARY TESTS
@@ -48,13 +56,18 @@ var Game = function(gameSettings, gameComponents) {
 		this.component.DomWall.$game.find('#ui .key').html('Key?: ' + this.settings.levelKey);
 	};
 
+	this.modifyWall = function(col, row, type) {
+		this.settings.currentLevel[row][col] = type;
+		return this.settings.currentLevel;
+	};
+
 	this.onClick = function(elem) {
 		if (this.settings.gameRunning) {
 			var dataCol = parseInt(elem.attr('data-col'), 10);
 			var dataRow = parseInt(elem.attr('data-row'), 10);
 
 			// Update the player level setting, Move the player, Update the level map 
-			this.player.settings.currentLevel = this.walls.modifyWall(dataCol, dataRow, this.player.moving(elem));
+			this.settings.currentLevel = this.modifyWall(dataCol, dataRow, this.player.moving(elem));
 
 			// TODO : Save the player settings online
 			saveGame('save', this.player.settings);
@@ -89,7 +102,7 @@ var Game = function(gameSettings, gameComponents) {
 		if (moveAllowed) {
 			event.preventDefault();
 			var elem = that.component.DomWall.$actionLayer.find('.actionWall#wall-'+ dataCol +'-'+ dataRow);
-			that.player.settings.currentLevel = that.walls.modifyWall(dataCol, dataRow, that.player.moving(elem));
+			that.settings.currentLevel = that.modifyWall(dataCol, dataRow, that.player.moving(elem));
 		}
 	};
 };

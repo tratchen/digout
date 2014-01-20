@@ -7,6 +7,8 @@ var Player = function() {
 	this.baseSpeed = 150;
 	this.spriteLoop = 0;
 	this.state = "idle";
+	this.actionWallFlag = true;
+
 	this.possiblesMoves = [
 		[0,0,1,0,0],
 		[0,1,1,1,0],
@@ -14,6 +16,7 @@ var Player = function() {
 		[0,1,1,1,0],
 		[0,0,1,0,0]
 	];
+
 	this.possiblesActions = [
 		[0,0,0,0,0],
 		[0,0,1,0,0],
@@ -21,14 +24,12 @@ var Player = function() {
 		[0,0,1,0,0],
 		[0,0,0,0,0]
 	];
-	this.spriteAnimation = null;
-	this.actionWallFlag = true;
 
 	this.init = function(settings, gameComponents, root) {
 		
 		this.root = root;
 		this.settings = settings;
-		this.component = component;
+		this.component = gameComponents;
 
 		this.width = this.settings.baseMap;
 		this.height = this.settings.baseMap;
@@ -41,7 +42,6 @@ var Player = function() {
 		this.settings.xpRemains = Math.sqrt(this.settings.level) * 1000;
 		this.settings.xp = this.settings.xp < 1 ? 1 : this.settings.xp;
 
-		this.sprite(this.state);
 		this.draw();
 	};
 
@@ -84,8 +84,6 @@ var Player = function() {
 			left: this.x,
 		});
 
-
-
 		this.component.DomWall.$allLayers.css({
 			top: (this.settings.gameWidth / 2) - this.y,
 			left: (this.settings.gameHeight / 2) - this.x
@@ -94,36 +92,29 @@ var Player = function() {
 		this.checkPossiblesMove();
 	};
 
-	this.sprite = function() {
+	this.spriteAnimation = function() {
 
-		var that = this;
+		var rowSprite;
+		var steps;
 
-		clearInterval(this.spriteAnimation);
-		this.spriteLoop = 0;
+		//debug(this.state, "State");
 
 		if (this.state === "idle") {
-			var rowSprite = 0;
-			var steps = 3;
+			rowSprite = 0;
+			steps = 3;
 		}
 
-		// Anime it
-		this.spriteAnimation = setInterval(function() {
-			that.spriteAnimationLoop(rowSprite,steps);
-		}, this.baseSpeed * 2);
-	};
-
-	this.spriteAnimationLoop = function(rowSprite, steps) {
-
-		this.component.DomWall.$playerSprite.css({
-			backgroundPositionY: rowSprite,
-			backgroundPositionX: -this.spriteLoop*this.settings.baseMap
-		});
-
-		if (this.spriteLoop === steps) {
+		if (this.spriteLoop >= steps) {
 			this.spriteLoop = 0;
 		} else {
 			this.spriteLoop++;
 		}
+
+		// Anime it
+		this.component.DomWall.$playerSprite.css({
+			backgroundPositionY: rowSprite,
+			backgroundPositionX: - this.spriteLoop * this.settings.baseMap
+		});
 	};
 
 	this.checkPossiblesMove = function() {
@@ -230,11 +221,10 @@ var Player = function() {
 
 	this.move = function(Y,X,Z) {
 
-		// stop animation
-		clearInterval(this.spriteAnimation);
-
 		var oldZIndex = this.component.DomWall.$player.css('z-index');
 		var that = this;
+
+		this.state = 'walk';
 
 		// previens le glitch avant le déplacement 
 		if (Z - oldZIndex >= 9) {
@@ -260,7 +250,11 @@ var Player = function() {
 			that.x = X;
 			that.y = Y;
 			that.checkPossiblesMove();
-			that.sprite('idle');
+		
+			if ( that.state !== "mining" ) {
+				that.state = 'idle';
+			}
+
 		}).attr({
 			'data-row': parseInt( X/that.settings.baseMap, 10 ),
 			'data-col': parseInt( Y/that.settings.baseMap, 10 )
@@ -290,7 +284,7 @@ var Player = function() {
 
 		this.settings[kindOfTreasure] = this.settings[kindOfTreasure] + bonus;
 		
-		this.calculateXP();
+		//this.calculateXP();
 	};
 
 	this.resultOfTheMinigEvent = function(result) {
@@ -332,19 +326,22 @@ var Player = function() {
 		var typeResultClass = this.component.walls[typeResult].afterdig[0];
 		var typeResultId = this.component.walls[typeResult].afterdig[1];
 		var result = this.component.walls[typeResult].result;
-		var r = [typeResultId, result];
+
+		//TODO: create mining animation
+		this.state = 'mining';
 
 		// Stop all action until the animation's end
 		this.actionWallFlag = false;
 
-		// Mine block & modify the level
-		// newGame.modifyWall(dataCol, dataRow, player.mining(dataCol, dataRow, $this));
 		this.component.DomWall.$player.find('.miningBar').fadeIn(250).find('.progression').css('width',0).animate({
 			width: '100%'
-		}, 800, function() {			
+		}, 800, function() {
+
 			that.actionWallFlag = true;
+			that.state = "idle";
 			blocks.removeClass(originalType).addClass(typeResultClass).attr('data-type', typeResultId);
 			that.component.DomWall.$player.find('.miningBar').fadeOut(250);
+
 		});
 
 		this.resultOfTheMinigEvent(result);
@@ -369,7 +366,7 @@ var Player = function() {
 				if (blocElement.hasClass('exit')) {
 					
 					// Check the levelKey status and make decisions
-					console.log("Have you the key ?", this.settings.levelKey ? "Yes, go Exit the level" : "No, the door is closed");
+					debug("Have you the key ?", this.settings.levelKey ? "Yes, go Exit the level" : "No, the door is closed");
 				}
 				
 				//Move position
@@ -377,16 +374,18 @@ var Player = function() {
 
 			} else if (blocElement.hasClass('digout')) {
 
+				// Move position
+				this.move(destinationY,destinationX,positionIDWall);
+
 				// Minig block
 				typeResult = this.mining(blocElement.attr('id'), typeResult);
 
-				// Move position
-				this.move(destinationY,destinationX,positionIDWall);
+				
 
 			} else {
 
 				// Can't move there
-				console.log('no moving possible');
+				debug('no moving possible');
 				return typeResult;
 			}
 		}

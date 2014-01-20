@@ -71,7 +71,7 @@ gameComponents.DomWall.$playerTrigger = $game.find('#playerTrigger');
 function update() {
 	// Update the ui
 	if (gameSettings.gameRunning) {
-		game.UIUpdate(player.settings);
+		game.updating();
 	}
 }
 
@@ -109,7 +109,7 @@ function start() {
 			$('.clearMemory').on('click', function(event) {
 				event.preventDefault();
 				localStorage.clear("save");
-			});
+			}).show();
 		}
 	}
 

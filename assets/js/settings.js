@@ -5,7 +5,7 @@ var gameSettings = {
 	"gameWidth": 800,
 	"gameHeight": 600,
 	"baseMap": 72,
-	"fps": 50,
+	"fps": 15,
 	"currentLevel": null,
 	"levelKey": false,
 	"poisoned": false,
