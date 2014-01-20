@@ -24,40 +24,39 @@ var Player = function() {
 	this.spriteAnimation = null;
 	this.actionWallFlag = true;
 
-	this.init = function(settings, gameComponents) {
+	this.init = function(settings, gameComponents, root) {
 		
+		this.root = root;
 		this.settings = settings;
-		this.gameComponents = gameComponents;
+		this.component = component;
 
 		this.width = this.settings.baseMap;
 		this.height = this.settings.baseMap;
 
 		// TODO: go to entrance if no saved game of new level else go to the saved position
 
-		this.x = parseInt(this.gameComponents.DomWall.actionLayer.find('.entrance').css('left'), 10) || 0;
-		this.y = parseInt(this.gameComponents.DomWall.actionLayer.find('.entrance').css('top'), 10) || 0;
+		this.x = parseInt(this.component.DomWall.$actionLayer.find('.entrance').css('left'), 10) || 0;
+		this.y = parseInt(this.component.DomWall.$actionLayer.find('.entrance').css('top'), 10) || 0;
 
 		this.settings.xpRemains = Math.sqrt(this.settings.level) * 1000;
 		this.settings.xp = this.settings.xp < 1 ? 1 : this.settings.xp;
 
 		this.sprite(this.state);
 		this.draw();
-
-		return this;
 	};
 
 	this.calculateXP = function() {
-		while (this.settings.xp > this.settings.xpRemains && this.settings.level <= this.gameComponents.maximumLevel) {
+		while (this.settings.xp > this.settings.xpRemains && this.settings.level <= this.component.maximumLevel) {
 			
-			var minXP = this.gameComponents.treasure.xp.minimal;
-			var maxXP = this.gameComponents.treasure.xp.maximum;
-			var maxLevel = this.gameComponents.maximumLevel;
+			var minXP = this.component.treasure.xp.minimal;
+			var maxXP = this.component.treasure.xp.maximum;
+			var maxLevel = this.component.maximumLevel;
 
 			this.settings.xpRemains = Math.floor(easeInCubic(this.settings.currentLevel, minXP, maxXP, maxLevel));
 			
 			this.settings.xp = Math.floor(this.settings.xp - this.settings.xpRemains);
 			
-			if (this.settings.level + 1 <= this.gameComponents.maximumLevel) {
+			if (this.settings.level + 1 <= this.component.maximumLevel) {
 				this.settings.level++;
 			}
 		}
@@ -65,27 +64,31 @@ var Player = function() {
 
 	this.draw = function() {
 
-		var Z = parseInt(this.gameComponents.DomWall.levelsLayer.find('#wall-' + parseInt( (this.y)/this.settings.baseMap, 10 ) + '-' + parseInt( (this.x)/this.settings.baseMap,10 ) ).css('z-index'), 10);
+		var stageSize = this.component.DomWall.$allLayers.width();
 
-		this.gameComponents.DomWall.player.css({
+		var Z = parseInt(this.component.DomWall.$levelsLayer.find('#wall-' + parseInt( (this.y)/this.settings.baseMap, 10 ) + '-' + parseInt( (this.x)/this.settings.baseMap,10 ) ).css('z-index'), 10);
+
+		this.component.DomWall.$player.css({
 			top: this.y,
 			left: this.x,
 			height: this.height,
 			width: this.width,
-			zIndex: Z+1
+			zIndex: Z + 1
 		}).attr({
-			'data-row': parseInt( (this.x)/this.settings.baseMap, 10 ),
-			'data-col': parseInt( (this.y)/this.settings.baseMap, 10 )
+			'data-row': parseInt( this.x / this.settings.baseMap, 10 ),
+			'data-col': parseInt( this.y / this.settings.baseMap, 10 )
 		});
 
-		this.gameComponents.DomWall.playerTrigger.css({
+		this.component.DomWall.$playerTrigger.css({
 			top: this.y,
 			left: this.x,
 		});
 
-		this.gameComponents.DomWall.allLayers.css({
-			top: this.settings.gameWidth / 2 -(this.y + this.settings.baseMap),
-			left: this.settings.gameHeight / 2 -(this.x - this.settings.baseMap)
+
+
+		this.component.DomWall.$allLayers.css({
+			top: (this.settings.gameWidth / 2) - this.y,
+			left: (this.settings.gameHeight / 2) - this.x
 		});
 
 		this.checkPossiblesMove();
@@ -111,7 +114,7 @@ var Player = function() {
 
 	this.spriteAnimationLoop = function(rowSprite, steps) {
 
-		this.gameComponents.DomWall.playerSprite.css({
+		this.component.DomWall.$playerSprite.css({
 			backgroundPositionY: rowSprite,
 			backgroundPositionX: -this.spriteLoop*this.settings.baseMap
 		});
@@ -134,7 +137,7 @@ var Player = function() {
 		var possiblesActionsLength = this.possiblesActions.length;
 
 		// reset
-		this.gameComponents.DomWall.actionLayer.find('.actionWall').removeClass('possiblesMoves impossiblesMoves digout');
+		this.component.DomWall.$actionLayer.find('.actionWall').removeClass('possiblesMoves impossiblesMoves digout');
 
 		for (i = 0; i < possiblesMovesLength; i++) {
 			for (j = 0; j < this.possiblesMoves[i].length; j++) {
@@ -151,7 +154,7 @@ var Player = function() {
 					var diagRow = 0;
 					var diagCol = 0;
 					
-					var targetWall = this.gameComponents.DomWall.actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"]');
+					var targetWall = this.component.DomWall.$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"]');
 					var betweenJumpFloorAction;
 					var diag = false;
 					
@@ -199,8 +202,8 @@ var Player = function() {
 						// Diagonals
 						if (diag) {
 
-							if (this.gameComponents.walls[this.gameComponents.DomWall.actionLayer.find('[data-row="'+(row + diagRow)+'"][data-col="'+(col)+'"]').attr('data-type')].action !== "impossiblesMoves" && this.gameComponents.walls[this.gameComponents.DomWall.actionLayer.find('[data-row="'+(row)+'"][data-col="'+(col + diagCol)+'"]').attr('data-type')].action !== "impossiblesMoves") {
-								targetWall.addClass(this.gameComponents.walls[targetWall.attr('data-type')].action);
+							if (this.component.walls[this.component.DomWall.$actionLayer.find('[data-row="'+(row + diagRow)+'"][data-col="'+(col)+'"]').attr('data-type')].action !== "impossiblesMoves" && this.component.walls[this.component.DomWall.$actionLayer.find('[data-row="'+(row)+'"][data-col="'+(col + diagCol)+'"]').attr('data-type')].action !== "impossiblesMoves") {
+								targetWall.addClass(this.component.walls[targetWall.attr('data-type')].action);
 							} else {
 								targetWall.addClass("impossiblesMoves");
 							}
@@ -208,17 +211,17 @@ var Player = function() {
 						// Double step straight through
 						} else {
 
-							betweenJumpFloorAction =  this.gameComponents.walls[this.gameComponents.DomWall.actionLayer.find('[data-row="' + longJumpRow + '"][data-col="' + longJumpCol + '"]').attr('data-type')].action;
+							betweenJumpFloorAction =  this.component.walls[this.component.DomWall.$actionLayer.find('[data-row="' + longJumpRow + '"][data-col="' + longJumpCol + '"]').attr('data-type')].action;
 
 							if (betweenJumpFloorAction === "possiblesMoves") {
-								targetWall.addClass(this.gameComponents.walls[targetWall.attr('data-type')].action);
+								targetWall.addClass(this.component.walls[targetWall.attr('data-type')].action);
 							} else {
 								targetWall.addClass("impossiblesMoves");
 							}
 						}
 					
 					} else {
-						targetWall.addClass(this.gameComponents.walls[targetWall.attr('data-type')].action);
+						targetWall.addClass(this.component.walls[targetWall.attr('data-type')].action);
 					}
 				}
 			}
@@ -230,26 +233,26 @@ var Player = function() {
 		// stop animation
 		clearInterval(this.spriteAnimation);
 
-		var oldZIndex = this.gameComponents.DomWall.player.css('z-index');
+		var oldZIndex = this.component.DomWall.$player.css('z-index');
 		var that = this;
 
 		// previens le glitch avant le déplacement 
 		if (Z - oldZIndex >= 9) {
-			this.gameComponents.DomWall.player.css({
+			this.component.DomWall.$player.css({
 				zIndex: Z + 1
 			});
 		} else if (Z - oldZIndex < -9)  {
-			this.gameComponents.DomWall.player.css({
+			this.component.DomWall.$player.css({
 				zIndex: Z + 11
 			});
 		} else {
-			this.gameComponents.DomWall.player.css({
+			this.component.DomWall.$player.css({
 				zIndex: Z + 9
 			});
 		}
 
 		// move the player sprite
-		this.gameComponents.DomWall.player.animate({
+		this.component.DomWall.$player.animate({
 			top: Y,
 			left: X,
 			zIndex: Z + 1
@@ -264,25 +267,25 @@ var Player = function() {
 		});
 
 		// move the player trigger
-		this.gameComponents.DomWall.playerTrigger.animate({
+		this.component.DomWall.$playerTrigger.animate({
 			top: Y,
 			left: X
 		},this.baseSpeed);
 
 		// move the "camera"
-		this.gameComponents.DomWall.allLayers.stop().animate({
-			top: this.settings.gameWidth / 2 -(Y + this.settings.baseMap),
-			left: this.settings.gameHeight / 2 -(X - this.settings.baseMap)
+		this.component.DomWall.$allLayers.stop().animate({
+			top: this.settings.gameWidth / 2 - Y,
+			left: this.settings.gameHeight / 2 - X
 		},this.baseSpeed * 10, 'easeOutExpo');
 	};
 
 	this.randomTreasures = function() {
 		// Treasure amount depend of the teasure kind and player level
-		var random = Math.floor(Math.random() * (this.gameComponents.treasuresKind.length -1) );
-		var kindOfTreasure = this.gameComponents.treasuresKind[random];
-		var minTreasure = this.gameComponents.treasures[kindOfTreasure].minimal;
-		var maxTreasure = this.gameComponents.treasures[kindOfTreasure].maximum;
-		var maxLevel = this.gameComponents.maximumLevel;
+		var random = Math.floor(Math.random() * (this.component.treasuresKind.length -1) );
+		var kindOfTreasure = this.component.treasuresKind[random];
+		var minTreasure = this.component.treasures[kindOfTreasure].minimal;
+		var maxTreasure = this.component.treasures[kindOfTreasure].maximum;
+		var maxLevel = this.component.maximumLevel;
 		var bonus = Math.floor(easeOutCubic(this.settings.level, minTreasure, maxTreasure, maxLevel));
 
 		this.settings[kindOfTreasure] = this.settings[kindOfTreasure] + bonus;
@@ -324,11 +327,11 @@ var Player = function() {
 	this.mining = function(blocElement, typeResult) {
 
 		var that = this;
-		var blocks = this.gameComponents.DomWall.allLayers.find('#' + blocElement);
-		var originalType = that.gameComponents.walls[typeResult].type;
-		var typeResultClass = this.gameComponents.walls[typeResult].afterdig[0];
-		var typeResultId = this.gameComponents.walls[typeResult].afterdig[1];
-		var result = this.gameComponents.walls[typeResult].result;
+		var blocks = this.component.DomWall.$allLayers.find('#' + blocElement);
+		var originalType = that.component.walls[typeResult].type;
+		var typeResultClass = this.component.walls[typeResult].afterdig[0];
+		var typeResultId = this.component.walls[typeResult].afterdig[1];
+		var result = this.component.walls[typeResult].result;
 		var r = [typeResultId, result];
 
 		// Stop all action until the animation's end
@@ -336,12 +339,12 @@ var Player = function() {
 
 		// Mine block & modify the level
 		// newGame.modifyWall(dataCol, dataRow, player.mining(dataCol, dataRow, $this));
-		this.gameComponents.DomWall.player.find('.miningBar').fadeIn(250).find('.progression').css('width',0).animate({
+		this.component.DomWall.$player.find('.miningBar').fadeIn(250).find('.progression').css('width',0).animate({
 			width: '100%'
 		}, 800, function() {			
 			that.actionWallFlag = true;
 			blocks.removeClass(originalType).addClass(typeResultClass).attr('data-type', typeResultId);
-			that.gameComponents.DomWall.player.find('.miningBar').fadeOut(250);
+			that.component.DomWall.$player.find('.miningBar').fadeOut(250);
 		});
 
 		this.resultOfTheMinigEvent(result);
