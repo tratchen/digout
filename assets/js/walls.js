@@ -46,8 +46,8 @@ var Walls = function() {
 		}
 
 		this.component.DomWall.$levelsLayer.css({
-			width: this.settings.gameWidth,
-			height: this.settings.gameHeight
+			width: length * this.settings.baseMap,
+			height: length * this.settings.baseMap
 		});
 	};
 };

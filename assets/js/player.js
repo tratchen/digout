@@ -64,8 +64,6 @@ var Player = function() {
 
 	this.draw = function() {
 
-		var stageSize = this.component.DomWall.$allLayers.width();
-
 		this.z = parseInt(this.component.DomWall.$levelsLayer.find('#wall-' + parseInt( (this.y)/this.settings.baseMap, 10 ) + '-' + parseInt( (this.x)/this.settings.baseMap,10 ) ).css('z-index'), 10) + 1;
 
 		// Place the player

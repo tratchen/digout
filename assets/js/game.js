@@ -44,19 +44,15 @@ var Game = function(gameSettings, gameComponents) {
 	};
 
 	this.centerCamera = function() {
-		/*
-		this.component.DomWall.$allLayers.css({
-			top: (this.settings.gameWidth / 2) - this.player.y,
-			left: (this.settings.gameHeight / 2) - this.player.x
-		});
-		
-		*/
+
+		var cameraPosTop = Math.floor( (this.settings.gameHeight / 2) - (this.settings.currentLevel.length / 2) - this.player.y );
+		var cameraPosLeft =  Math.floor( (this.settings.gameWidth / 2) - (this.settings.currentLevel.length / 2) - this.player.x );
+
 		// move the "camera"
-		this.component.DomWall.$allLayers.stop(true, true).animate({
-			top: Math.floor(this.settings.gameWidth / 2 - this.player.y),
-			left: Math.floor(this.settings.gameHeight / 2 - this.player.x)
+		this.component.DomWall.$allLayers.stop().animate({
+			top: cameraPosTop,
+			left: cameraPosLeft
 		},this.player.baseSpeed * 10, 'easeOutExpo');
-		
 	};
 
 	this.UIUpdate = function() {
