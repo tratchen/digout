@@ -20,9 +20,6 @@ var Game = function(gameSettings, gameComponents) {
 		this.walls.init(this.settings, this.component, this);
 		this.player.init(this.settings, this.component, this);
 
-		// Drag and drop gamezone
-		this.component.DomWall.$game.draggable();
-
 		// Click on a floor bind event
 		this.component.DomWall.$actionLayer.find('.actionWall').on('click', function(event) {
 			event.preventDefault();
@@ -45,14 +42,16 @@ var Game = function(gameSettings, gameComponents) {
 
 	this.centerCamera = function() {
 
-		var cameraPosTop = Math.floor( (this.settings.gameHeight / 2) - (this.settings.currentLevel.length / 2) - this.player.y );
-		var cameraPosLeft =  Math.floor( (this.settings.gameWidth / 2) - (this.settings.currentLevel.length / 2) - this.player.x );
+		var cameraPosTop = Math.floor( (this.settings.gameHeight / 2) - (this.settings.currentLevel.length / 2) - this.player.y - (this.settings.baseMap / 2));
+		var cameraPosLeft =  Math.floor( (this.settings.gameWidth / 2) - (this.settings.currentLevel.length / 2) - this.player.x - (this.settings.baseMap / 2) );
 
 		// move the "camera"
 		this.component.DomWall.$allLayers.stop().animate({
 			top: cameraPosTop,
 			left: cameraPosLeft
-		},this.player.baseSpeed * 10, 'easeOutExpo');
+		},this.player.baseSpeed);
+
+		//'easeOutExpo'
 	};
 
 	this.UIUpdate = function() {
