@@ -66,29 +66,27 @@ var Player = function() {
 
 		var stageSize = this.component.DomWall.$allLayers.width();
 
-		var Z = parseInt(this.component.DomWall.$levelsLayer.find('#wall-' + parseInt( (this.y)/this.settings.baseMap, 10 ) + '-' + parseInt( (this.x)/this.settings.baseMap,10 ) ).css('z-index'), 10);
+		this.z = parseInt(this.component.DomWall.$levelsLayer.find('#wall-' + parseInt( (this.y)/this.settings.baseMap, 10 ) + '-' + parseInt( (this.x)/this.settings.baseMap,10 ) ).css('z-index'), 10) + 1;
 
+		// Place the player
 		this.component.DomWall.$player.css({
 			top: this.y,
 			left: this.x,
 			height: this.height,
 			width: this.width,
-			zIndex: Z + 1
+			zIndex: this.z
 		}).attr({
 			'data-row': parseInt( this.x / this.settings.baseMap, 10 ),
 			'data-col': parseInt( this.y / this.settings.baseMap, 10 )
 		});
 
+		// Place the player trigger
 		this.component.DomWall.$playerTrigger.css({
 			top: this.y,
 			left: this.x,
 		});
 
-		this.component.DomWall.$allLayers.css({
-			top: (this.settings.gameWidth / 2) - this.y,
-			left: (this.settings.gameHeight / 2) - this.x
-		});
-
+		// Check moves
 		this.checkPossiblesMove();
 	};
 
@@ -144,10 +142,13 @@ var Player = function() {
 					
 					var diagRow = 0;
 					var diagCol = 0;
-					
-					var targetWall = this.component.DomWall.$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"]');
+
 					var betweenJumpFloorAction;
 					var diag = false;
+					
+					var targetWall = this.component.DomWall.$actionLayer.find('[data-row="'+aroundRow+'"][data-col="'+aroundCol+'"]');
+					
+					var type = targetWall.attr('data-type') || 0;
 					
 					// Check if 2 step or diagonals is available to move
 					if ( Math.abs(i + j - 4) === 0 || Math.abs(i + j - 4) === 2 ) {
@@ -193,26 +194,26 @@ var Player = function() {
 						// Diagonals
 						if (diag) {
 
-							if (this.component.walls[this.component.DomWall.$actionLayer.find('[data-row="'+(row + diagRow)+'"][data-col="'+(col)+'"]').attr('data-type')].action !== "impossiblesMoves" && this.component.walls[this.component.DomWall.$actionLayer.find('[data-row="'+(row)+'"][data-col="'+(col + diagCol)+'"]').attr('data-type')].action !== "impossiblesMoves") {
-								targetWall.addClass(this.component.walls[targetWall.attr('data-type')].action);
+							if (this.component.walls[this.component.DomWall.$actionLayer.find('[data-row="'+(row + diagRow)+'"][data-col="'+(col)+'"]').attr('data-type') || 0].action !== "impossiblesMoves" && this.component.walls[this.component.DomWall.$actionLayer.find('[data-row="'+(row)+'"][data-col="'+(col + diagCol)+'"]').attr('data-type') || 0].action !== "impossiblesMoves") {
+								targetWall.addClass(this.component.walls[type].action);
 							} else {
 								targetWall.addClass("impossiblesMoves");
 							}
 
 						// Double step straight through
 						} else {
-
-							betweenJumpFloorAction =  this.component.walls[this.component.DomWall.$actionLayer.find('[data-row="' + longJumpRow + '"][data-col="' + longJumpCol + '"]').attr('data-type')].action;
-
+							betweenJumpFloorAction =  this.component.walls[this.component.DomWall.$actionLayer.find('[data-row="' + longJumpRow + '"][data-col="' + longJumpCol + '"]').attr('data-type') || 0].action;
 							if (betweenJumpFloorAction === "possiblesMoves") {
-								targetWall.addClass(this.component.walls[targetWall.attr('data-type')].action);
+
+								targetWall.addClass(this.component.walls[type].action);
+							
+
 							} else {
 								targetWall.addClass("impossiblesMoves");
 							}
 						}
-					
 					} else {
-						targetWall.addClass(this.component.walls[targetWall.attr('data-type')].action);
+						targetWall.addClass(this.component.walls[type].action);
 					}
 				}
 			}
@@ -221,25 +222,23 @@ var Player = function() {
 
 	this.move = function(Y,X,Z) {
 
-		var oldZIndex = this.component.DomWall.$player.css('z-index');
 		var that = this;
+		var tempZ;
 
 		this.state = 'walk';
 
 		// previens le glitch avant le déplacement 
-		if (Z - oldZIndex >= 9) {
-			this.component.DomWall.$player.css({
-				zIndex: Z + 1
-			});
-		} else if (Z - oldZIndex < -9)  {
-			this.component.DomWall.$player.css({
-				zIndex: Z + 11
-			});
+		if (Z - this.z >= 9) {
+			tempZ = Z + 1;
+		} else if (Z - this.z < -9)  {
+			tempZ = Z + 11;
 		} else {
-			this.component.DomWall.$player.css({
-				zIndex: Z + 9
-			});
+			tempZ = Z + 9;
 		}
+
+		this.component.DomWall.$player.css({
+			zIndex: tempZ
+		});
 
 		// move the player sprite
 		this.component.DomWall.$player.animate({
@@ -249,6 +248,7 @@ var Player = function() {
 		},this.baseSpeed, function() {
 			that.x = X;
 			that.y = Y;
+			that.z = Z + 1;
 			that.checkPossiblesMove();
 		
 			if ( that.state !== "mining" ) {
@@ -262,15 +262,9 @@ var Player = function() {
 
 		// move the player trigger
 		this.component.DomWall.$playerTrigger.animate({
-			top: Y,
-			left: X
+			top: this.y,
+			left: this.x
 		},this.baseSpeed);
-
-		// move the "camera"
-		this.component.DomWall.$allLayers.stop().animate({
-			top: this.settings.gameWidth / 2 - Y,
-			left: this.settings.gameHeight / 2 - X
-		},this.baseSpeed * 10, 'easeOutExpo');
 	};
 
 	this.randomTreasures = function() {
@@ -290,7 +284,7 @@ var Player = function() {
 	this.resultOfTheMinigEvent = function(result) {
 		
 		// TO DO : MONSTER CASE
-		console.log('player.resultOfTheMinigEvent: ', result);
+		debug(result, "player.resultOfTheMinigEvent");
 
 		switch(result) {
 
@@ -351,47 +345,50 @@ var Player = function() {
 
 	// Let te player choose what it does when you click somewhere
 	this.moving = function(blocElement) {
+
+		if(blocElement) {
 		
-		var typeResult = parseInt(blocElement.attr('data-type'), 10);
+			var typeResult = parseInt(blocElement.attr('data-type'), 10) || 0;
 
-		if (this.actionWallFlag) {
-			
-			// WALK FREE
-			var destinationY = parseInt(blocElement.css('top'),10) + (this.settings.baseMap/2) - this.height/2;
-			var destinationX = parseInt(blocElement.css('left'),10) + (this.settings.baseMap/2) - this.width/2;
-			var positionIDWall = parseInt(blocElement.css('z-index'),10);
+			if (this.actionWallFlag) {
+				
+				// WALK FREE
+				var destinationY = parseInt(blocElement.css('top'),10) + (this.settings.baseMap/2) - this.height/2;
+				var destinationX = parseInt(blocElement.css('left'),10) + (this.settings.baseMap/2) - this.width/2;
+				var positionIDWall = parseInt(blocElement.css('z-index'),10);
 
-			if (blocElement.hasClass('possiblesMoves')) {
+				if (blocElement.hasClass('possiblesMoves')) {
 
-				if (blocElement.hasClass('exit')) {
+					if (blocElement.hasClass('exit')) {
+						
+						// Check the levelKey status and make decisions
+						debug("Have you the key ?", this.settings.levelKey ? "Yes, go Exit the level" : "No, the door is closed");
+					}
 					
-					// Check the levelKey status and make decisions
-					debug("Have you the key ?", this.settings.levelKey ? "Yes, go Exit the level" : "No, the door is closed");
+					//Move position
+					this.move(destinationY,destinationX,positionIDWall);
+
+				} else if (blocElement.hasClass('digout')) {
+
+					// Move position
+					this.move(destinationY,destinationX,positionIDWall);
+
+					// Minig block
+					typeResult = this.mining(blocElement.attr('id'), typeResult);
+
+					
+
+				} else {
+
+					// Can't move there
+					debug('no moving possible');
+					return typeResult;
 				}
-				
-				//Move position
-				this.move(destinationY,destinationX,positionIDWall);
-
-			} else if (blocElement.hasClass('digout')) {
-
-				// Move position
-				this.move(destinationY,destinationX,positionIDWall);
-
-				// Minig block
-				typeResult = this.mining(blocElement.attr('id'), typeResult);
-
-				
-
-			} else {
-
-				// Can't move there
-				debug('no moving possible');
-				return typeResult;
 			}
-		}
 
-		// Update the level map
-		return typeResult;
+			// Update the level map
+			return typeResult;
+		}	
 	};
 };
 // END PLAYER

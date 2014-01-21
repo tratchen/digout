@@ -39,8 +39,24 @@ var Game = function(gameSettings, gameComponents) {
 		
 		this.player.calculateXP();
 		this.player.spriteAnimation();
-
 		this.UIUpdate();
+		this.centerCamera();
+	};
+
+	this.centerCamera = function() {
+		/*
+		this.component.DomWall.$allLayers.css({
+			top: (this.settings.gameWidth / 2) - this.player.y,
+			left: (this.settings.gameHeight / 2) - this.player.x
+		});
+		
+		*/
+		// move the "camera"
+		this.component.DomWall.$allLayers.stop(true, true).animate({
+			top: Math.floor(this.settings.gameWidth / 2 - this.player.y),
+			left: Math.floor(this.settings.gameHeight / 2 - this.player.x)
+		},this.player.baseSpeed * 10, 'easeOutExpo');
+		
 	};
 
 	this.UIUpdate = function() {
@@ -57,7 +73,11 @@ var Game = function(gameSettings, gameComponents) {
 	};
 
 	this.modifyWall = function(col, row, type) {
-		this.settings.currentLevel[row][col] = type;
+		if (this.settings.currentLevel[row] !== undefined) {
+			if (this.settings.currentLevel[row][col] !== undefined) {
+				this.settings.currentLevel[row][col] = type || 0;
+			}
+		}
 		return this.settings.currentLevel;
 	};
 
@@ -99,10 +119,12 @@ var Game = function(gameSettings, gameComponents) {
 			dataRow++;
 		}
 
-		if (moveAllowed) {
+		if (moveAllowed && dataCol >= 0 && dataRow >= 0) {
 			event.preventDefault();
 			var elem = that.component.DomWall.$actionLayer.find('.actionWall#wall-'+ dataCol +'-'+ dataRow);
-			that.settings.currentLevel = that.modifyWall(dataCol, dataRow, that.player.moving(elem));
+			if(elem) {
+				that.settings.currentLevel = that.modifyWall(dataCol, dataRow, that.player.moving(elem));
+			}
 		}
 	};
 };

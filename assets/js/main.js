@@ -29,8 +29,10 @@ Number.prototype.clamp = function(min, max) {
 };
 
 var saveGame = function(key, value){
-	localStorage.setItem(key, JSON.stringify(value));
-	debug('Game saved');
+	if (key && value) {
+		localStorage.setItem(key, JSON.stringify(value));
+		debug('Game saved');
+	}
 };
 
 var getSavedGame = function(key){
@@ -84,7 +86,7 @@ function start() {
 			
 			gameSettings = getSavedGame('save');
 			
-			debug('There is a saved game: ', gameSettings);
+			debug(gameSettings, "There is a saved game");
 		
 		} else {
 			debug('No saved game, new party.');
