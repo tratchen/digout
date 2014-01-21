@@ -118,13 +118,16 @@ var Player = function() {
 		// calculate possibles moves
 		var i;
 		var j;
-		var row = parseInt(this.y/this.settings.baseMap,10);
-		var col = parseInt(this.x/this.settings.baseMap,10);
+		var row = parseInt(this.y/this.settings.baseMap, 10);
+		var col = parseInt(this.x/this.settings.baseMap, 10);
 		var possiblesMovesLength = this.possiblesMoves.length;
 		var possiblesActionsLength = this.possiblesActions.length;
+		var obstacleVisual = this.component.DomWall.$levelsLayer.find('#wall-' + (row + 1) +  "-" + col );
+		var obstacleTechnical = this.component.DomWall.$actionLayer.find('#wall-' + (row + 1) +  "-" + col );
 
 		// reset
 		this.component.DomWall.$actionLayer.find('.actionWall').removeClass('possiblesMoves impossiblesMoves digout');
+		this.component.DomWall.$levelsLayer.find('.collisionWall').css({ opacity: 1 });		
 
 		for (i = 0; i < possiblesMovesLength; i++) {
 			for (j = 0; j < this.possiblesMoves[i].length; j++) {
@@ -215,6 +218,10 @@ var Player = function() {
 					}
 				}
 			}
+		}
+
+		if (obstacleTechnical.hasClass('impossiblesMoves')) {
+			obstacleVisual.css({ opacity: 0.5 });
 		}
 	};
 

@@ -12,6 +12,7 @@ $player: url(../images/entities-sprites-16bit.png)
 $gameWidth: 800px
 $gameHeight: 600px
 $baseGrid: 72px
+$baseColor: #c09b44
 
 body
 	overflow: hidden
@@ -133,8 +134,7 @@ body
 
 #gameZone
 	#levelsLayer
-		/*background: url(../images/ground.png) repeat*/
-		background: #b09f84
+		background: $baseColor
  
 
 	/*COLLISION WALL (insibles) rotated*/
@@ -252,9 +252,37 @@ body
 
 
 		/*WALLS - VERTICAL*/
+		&.solidWall,
+		&.solidWallTopLeftCorner,
+		&.solidWallTopRightCorner
+			background: $walls (-$baseGrid*2) (-$baseGrid*3) no-repeat
+
 		&.solidWall .walls
 			height: $baseGrid*2
 			background: $walls (-$baseGrid*2) (-$baseGrid*2) no-repeat
+
+		
+		&.solidWallTopLeftCorner .walls
+			height: $baseGrid*2
+			background: $walls (-$baseGrid*3) (-$baseGrid*2) no-repeat
+
+		&.solidWallTopRightCorner .walls
+			height: $baseGrid*2
+			background: $walls -$baseGrid (-$baseGrid*2) no-repeat
+
+		
+		&.solidWallBottomLeftCorner
+			background: none
+			.walls
+				height: $baseGrid*2
+				background: $walls -$baseGrid (-$baseGrid*3) no-repeat
+
+		&.solidWallBottomRightCorner
+			background: none
+			.walls
+				height: $baseGrid*2
+				background: $walls (-$baseGrid*3) (-$baseGrid*3) no-repeat
+
 
 
 		/*SAND - random events & key - DIGOUT*/
@@ -276,12 +304,12 @@ body
 
 		/*ENTRANCE*/
 		&.entrance
-			background: $walls (-$baseGrid*3) (-$baseGrid) no-repeat
+			background: $walls 0 (-$baseGrid*4) no-repeat
 
 
 		/*EXIT*/
 		&.exit
-			background: $walls (-$baseGrid*2) (-$baseGrid) no-repeat
+			background: $walls 0 (-$baseGrid*5) no-repeat
 
 
 

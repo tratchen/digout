@@ -58,39 +58,59 @@ var gameComponents = {
 		},
 
 		"1": {
+			"type": "solidWallTopLeftCorner",
+			"action": "impossiblesMoves"
+		},
+
+		"2": {
+			"type": "solidWallTopRightCorner",
+			"action": "impossiblesMoves"
+		},
+
+		"3": {
+			"type": "solidWallBottomLeftCorner",
+			"action": "impossiblesMoves"
+		},
+
+		"4": {
+			"type": "solidWallBottomRightCorner",
+			"action": "impossiblesMoves"
+		},
+
+		"5": {
 			"type": "sand",
 			"action": "digout",
 			"result": "nothing",
 			"afterdig": ["sandCleared", 996]
 		},
 
-		"2": {
+		"6": {
 			"type": "sand",
 			"action": "digout",
 			"result": "treasure",
 			"afterdig": ["sandCleared", 996]
 		},
 
-		"3": {
+		"7": {
 			"type": "sand",
 			"action": "digout",
 			"result": "poison",
 			"afterdig": ["sandCleared", 996]
 		},
 
-		"4": {
+		"8": {
 			"type": "sand",
 			"action": "digout",
 			"result": "gold",
 			"afterdig": ["sandCleared", 996]
 		},
 
-		"5": {
+		"9": {
 			"type": "obstacle",
 			"action": "impossiblesMoves"
 		},
 
-		"6": {
+		"10": {
 			"type": "monster",
 			"action": "digout",
 			"result": "monster",
