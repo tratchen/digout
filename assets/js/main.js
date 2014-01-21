@@ -110,7 +110,7 @@ function start() {
 		if (debugMode) {
 			$('.clearMemory').on('click', function(event) {
 				event.preventDefault();
-				localStorage.clear("save");
+				return localStorage.clear("save");
 			}).show();
 		}
 	}

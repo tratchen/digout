@@ -35,9 +35,8 @@ var Player = function() {
 		this.height = this.settings.baseMap;
 
 		// TODO: go to entrance if no saved game of new level else go to the saved position
-
-		this.x = parseInt(this.component.DomWall.$actionLayer.find('.entrance').css('left'), 10) || 0;
-		this.y = parseInt(this.component.DomWall.$actionLayer.find('.entrance').css('top'), 10) || 0;
+		this.y = this.settings.y ? this.settings.y : parseInt(this.component.DomWall.$actionLayer.find('.entrance').css('top'), 10) || 0;
+		this.x = this.settings.x ? this.settings.x : parseInt(this.component.DomWall.$actionLayer.find('.entrance').css('left'), 10) || 0;
 
 		this.settings.xpRemains = Math.sqrt(this.settings.level) * 1000;
 		this.settings.xp = this.settings.xp < 1 ? 1 : this.settings.xp;
@@ -351,46 +350,43 @@ var Player = function() {
 	// Let te player choose what it does when you click somewhere
 	this.moving = function(blocElement) {
 
-		if(blocElement) {
+		if (blocElement) {
 		
-			var typeResult = parseInt(blocElement.attr('data-type'), 10) || 0;
+			var blocData = blocElement.data();
+			var typeResult = blocData.type;
 
 			if (this.actionWallFlag) {
 				
 				// WALK FREE
-				var destinationY = parseInt(blocElement.css('top'),10) + (this.settings.baseMap/2) - this.height/2;
-				var destinationX = parseInt(blocElement.css('left'),10) + (this.settings.baseMap/2) - this.width/2;
-				var positionIDWall = parseInt(blocElement.css('z-index'),10);
+				var destinationY = parseInt(blocElement.css('top'), 10);
+				var destinationX = parseInt(blocElement.css('left'), 10);
+				var positionIDWall = parseInt(blocElement.css('z-index'), 10);
 
 				if (blocElement.hasClass('possiblesMoves')) {
 
 					if (blocElement.hasClass('exit')) {
 						
 						// Check the levelKey status and make decisions
-						debug("Have you the key ?", this.settings.levelKey ? "Yes, go Exit the level" : "No, the door is closed");
+						debug(this.settings.levelKey ? "Yes, go Exit the level" : "No, the door is closed", "Have you the key ?");
 					}
 					
 					//Move position
-					this.move(destinationY,destinationX,positionIDWall);
+					this.move( destinationY, destinationX, positionIDWall );
 
 				} else if (blocElement.hasClass('digout')) {
 
 					// Move position
-					this.move(destinationY,destinationX,positionIDWall);
+					this.move( destinationY, destinationX, positionIDWall );
 
 					// Minig block
 					typeResult = this.mining(blocElement.attr('id'), typeResult);
 
-					
-
 				} else {
-
 					// Can't move there
-					debug('no moving possible');
+					debug(typeResult, 'no moving possible');
 					return typeResult;
 				}
 			}
-
 			// Update the level map
 			return typeResult;
 		}	

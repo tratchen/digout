@@ -9,8 +9,6 @@ var Game = function(gameSettings, gameComponents) {
 
 	this.init = function() {
 
-		var that = this;
-
 		this.settings.gameWidth = $(window).width();
 		this.settings.gameHeight = $(window).height();
 
@@ -20,6 +18,8 @@ var Game = function(gameSettings, gameComponents) {
 		this.walls.init(this.settings, this.component, this);
 		this.player.init(this.settings, this.component, this);
 
+		var that = this;
+
 		// Click on a floor bind event
 		this.component.DomWall.$actionLayer.find('.actionWall').on('click', function(event) {
 			event.preventDefault();
@@ -27,7 +27,8 @@ var Game = function(gameSettings, gameComponents) {
 		});
 		
 		// Move with Arrow Keys
-		$(document.documentElement).keydown(function(event) {		
+		$(document.documentElement).keydown(function(event) {
+			//event.preventDefault();
 			that.onKeyDown(event);
 		});
 	};
@@ -38,6 +39,16 @@ var Game = function(gameSettings, gameComponents) {
 		this.player.spriteAnimation();
 		this.UIUpdate();
 		this.centerCamera();
+	};
+
+	this.save = function() {
+		// Save position
+		this.settings.x = this.player.x;
+		this.settings.y = this.player.y;
+		this.settings.z = this.player.z;
+
+		// Save the game settings
+		saveGame('save', this.player.settings);
 	};
 
 	this.centerCamera = function() {
@@ -70,7 +81,7 @@ var Game = function(gameSettings, gameComponents) {
 	this.modifyWall = function(col, row, type) {
 		if (this.settings.currentLevel[row] !== undefined) {
 			if (this.settings.currentLevel[row][col] !== undefined) {
-				this.settings.currentLevel[row][col] = type || 0;
+				this.settings.currentLevel[row][col] = type;
 			}
 		}
 		return this.settings.currentLevel;
@@ -84,24 +95,23 @@ var Game = function(gameSettings, gameComponents) {
 			// Update the player level setting, Move the player, Update the level map 
 			this.settings.currentLevel = this.modifyWall(dataCol, dataRow, this.player.moving(elem));
 
-			// TODO : Save the player settings online
-			saveGame('save', this.player.settings);
+			this.save();
 		}
 	};
 
 	this.onKeyDown = function(event) {
+		var elem;
 		var playerPosition = game.component.DomWall.$player;
 		var dataRow = parseInt(playerPosition.attr('data-row'), 10);
 		var dataCol = parseInt(playerPosition.attr('data-col'), 10);
 		var moveAllowed = false;
-		var that = this;
 		
 		if (event.keyCode === 40) {
 			// Down
 			moveAllowed = true;
 			dataCol++;
 		} else if (event.keyCode === 38) {
-			// UP
+			// Up
 			moveAllowed = true;
 			dataCol--;
 		} else if (event.keyCode === 37) {
@@ -115,11 +125,13 @@ var Game = function(gameSettings, gameComponents) {
 		}
 
 		if (moveAllowed && dataCol >= 0 && dataRow >= 0) {
-			event.preventDefault();
-			var elem = that.component.DomWall.$actionLayer.find('.actionWall#wall-'+ dataCol +'-'+ dataRow);
-			if(elem) {
-				that.settings.currentLevel = that.modifyWall(dataCol, dataRow, that.player.moving(elem));
+			elem = this.component.DomWall.$actionLayer.find('.actionWall#wall-'+ dataCol +'-'+ dataRow);
+			
+			if (elem) {
+				this.settings.currentLevel = this.modifyWall(dataCol, dataRow, this.player.moving(elem));
 			}
 		}
+
+		this.save();
 	};
 };

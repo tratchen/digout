@@ -14,7 +14,10 @@ var gameSettings = {
 	"emerald": 0,
 	"xp": 0,
 	"life": 100,
-	"antiPoison": 0
+	"antiPoison": 0,
+	"x": 0,
+	"y": 0,
+	"z": 0
 };
 
 var gameComponents = {
